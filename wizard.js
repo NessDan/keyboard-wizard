@@ -3,7 +3,7 @@ const currentStep = () => steps[wizardStep];
 const updateInstructions = () => {
   if (currentStep().message) {
     instructionsEl.innerText = currentStep().message;
-  } else if (currentStep().message) {
+  } else if (currentStep().keyToSet) {
     instructionsEl.innerText = `Press key for: ${currentStep().keyToSet}`;
   }
 };
@@ -72,12 +72,17 @@ const steps = [
 
 console.log(wizardSettings);
 
-document.addEventListener('keydown', (event) => {
+const keyDownHandler = (event) => {
+  if (wizardStep === steps.length - 1) {
+    return;
+  }
   const prop = currentStep().propertyToModify;
   const wizardObject = currentStep().objectReference;
   wizardObject[prop] = event.code;
   wizardStep += 1;
   updateInstructions();
-});
+};
+
+document.addEventListener('keydown', keyDownHandler);
 
 updateInstructions();
