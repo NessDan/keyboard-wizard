@@ -1,3 +1,14 @@
+const currentStep = () => steps[wizardStep];
+
+const updateInstructions = () => {
+  if (currentStep().message) {
+    instructionsEl.innerText = currentStep().message;
+  } else if (currentStep().message) {
+    instructionsEl.innerText = `Press key for: ${currentStep().keyToSet}`;
+  }
+};
+const instructionsEl = document.getElementById('directions');
+
 const wizardSettings = {
   leftStick: {
     up: '',
@@ -45,18 +56,28 @@ let wizardStep = 0;
 
 const steps = [
   {
-    message: 'Press Key for Left Stick Up',
+    keyToSet: 'Left Stick Up',
     objectReference: wizardSettings.leftStick,
     propertyToModify: 'up',
+  },
+  {
+    keyToSet: 'Left Stick Down',
+    objectReference: wizardSettings.leftStick,
+    propertyToModify: 'down',
+  },
+  {
+    message: "You're all set! Click the button below to save your settings.",
   },
 ];
 
 console.log(wizardSettings);
 
 document.addEventListener('keydown', (event) => {
-  const prop = steps[wizardStep].propertyToModify;
-  const wizardObject = steps[wizardStep].objectReference;
+  const prop = currentStep().propertyToModify;
+  const wizardObject = currentStep().objectReference;
   wizardObject[prop] = event.code;
-
   wizardStep += 1;
+  updateInstructions();
 });
+
+updateInstructions();
