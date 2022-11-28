@@ -1,0 +1,52 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: space-evenly;
+  border: 2px solid gray;
+  margin: 1rem;
+  text-align: center;
+  min-height: 8rem;
+  font-size: 2rem;
+  min-width: 8.5rem;
+}
+
+.card-header {
+  border-bottom: 2px solid gray;
+  padding-bottom: 0.5rem;
+}
+
+.card-body {
+  display: flex;
+  justify-content: center;
+}
+
+.key {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 64px;
+  height: 64px;
+  border: 3px solid gray;
+}
+
+.card-holder {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: space-evenly;
+  max-width: 30rem;
+}
+
+.config-group-header {
+  font-size: 3rem;
+  text-align: center;
+}
+
+#config-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
