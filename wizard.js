@@ -97,8 +97,6 @@ const steps = [
   },
 ];
 
-console.log(wizardSettings);
-
 const keyDownHandler = (event) => {
   event.preventDefault();
   if (wizardStep === steps.length - 1) {
@@ -113,7 +111,28 @@ const keyDownHandler = (event) => {
   updateInstructions();
 };
 
+const cardClickHandler = (event) => {
+  const cardEl = event.target.closest('.card');
+  if (!cardEl) {
+    return;
+  }
+  const parentProp = cardEl.dataset.parentprop;
+  const prop = cardEl.dataset.prop;
+  const step = steps.findIndex(
+    (step) => step.parentProp === parentProp && step.propertyToModify === prop
+  );
+  if (step === -1) {
+    return;
+  }
+  wizardStep = step;
+  setActiveCard();
+  updateInstructions();
+};
+
 document.addEventListener('keydown', keyDownHandler);
 setActiveCard();
 updateInstructions();
 updateAllKeyEls();
+document.querySelectorAll('.card').forEach((cardEl) => {
+  cardEl.addEventListener('click', cardClickHandler);
+});
