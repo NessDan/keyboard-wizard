@@ -1,4 +1,77 @@
+const instructionsEl = document.getElementById('directions');
 const currentStep = () => steps[wizardStep];
+let wizardSettings;
+
+const saveWizardSettings = () => {
+  // Save the wizard settings to localStorage
+  localStorage.setItem('wizardSettings', JSON.stringify(wizardSettings));
+};
+
+const loadWizardSettings = () => {
+  // Load the wizard settings from localStorage
+  return localStorage.getItem('wizardSettings');
+};
+
+const eraseWizardSettings = () => {
+  // Erase the wizard settings from localStorage and the variable in memory
+  localStorage.removeItem('wizardSettings');
+  resetWizardSettings();
+};
+
+const resetWizardSettings = () => {
+  wizardSettings = {
+    leftStick: {
+      up: '',
+      down: '',
+      left: '',
+      right: '',
+    },
+    rightStick: {
+      up: '',
+      down: '',
+      left: '',
+      right: '',
+    },
+    buttons: {
+      a: '',
+      b: '',
+      x: '',
+      y: '',
+    },
+    triggers: {
+      l: '',
+      r: '',
+      zl: '',
+      zr: '',
+    },
+    dpad: {
+      up: '',
+      down: '',
+      left: '',
+      right: '',
+    },
+    system: {
+      start: '',
+      select: '',
+      home: '',
+      capture: '',
+    },
+    misc: {
+      leftStickClick: '',
+      rightStickClick: '',
+    },
+  };
+};
+
+const initWizardSettings = () => {
+  // Initialize the wizard settings
+  const savedSettings = loadWizardSettings();
+  if (savedSettings) {
+    wizardSettings = JSON.parse(savedSettings);
+  } else {
+    resetWizardSettings();
+  }
+};
 
 const updateInstructions = () => {
   if (currentStep().message) {
@@ -21,7 +94,7 @@ const updateAllKeyEls = () => {
   });
 };
 
-const setActiveCard = () => {
+const updateActiveCard = () => {
   const parentProp = currentStep().parentProp;
   const prop = currentStep().propertyToModify;
   const nextActiveCardEl = document.querySelector(
@@ -34,49 +107,10 @@ const setActiveCard = () => {
   nextActiveCardEl?.ariaPressed ?? 'true';
 };
 
-const instructionsEl = document.getElementById('directions');
-
-const wizardSettings = {
-  leftStick: {
-    up: '',
-    down: '',
-    left: '',
-    right: '',
-  },
-  rightStick: {
-    up: '',
-    down: '',
-    left: '',
-    right: '',
-  },
-  buttons: {
-    a: '',
-    b: '',
-    x: '',
-    y: '',
-  },
-  triggers: {
-    l: '',
-    r: '',
-    zl: '',
-    zr: '',
-  },
-  dpad: {
-    up: '',
-    down: '',
-    left: '',
-    right: '',
-  },
-  system: {
-    start: '',
-    select: '',
-    home: '',
-    capture: '',
-  },
-  misc: {
-    leftStickClick: '',
-    rightStickClick: '',
-  },
+const updateAllEls = () => {
+  updateInstructions();
+  updateAllKeyEls();
+  updateActiveCard();
 };
 
 let wizardStep = 0;
@@ -106,9 +140,8 @@ const keyDownHandler = (event) => {
   const prop = currentStep().propertyToModify;
   wizardSettings[parentProp][prop] = event.code;
   wizardStep += 1;
-  setActiveCard();
-  updateKeyEl(parentProp, prop);
-  updateInstructions();
+  updateAllEls();
+  saveWizardSettings();
 };
 
 const cardClickHandler = (event) => {
@@ -125,14 +158,17 @@ const cardClickHandler = (event) => {
     return;
   }
   wizardStep = step;
-  setActiveCard();
-  updateInstructions();
+  updateAllEls();
 };
 
-document.addEventListener('keydown', keyDownHandler);
-setActiveCard();
-updateInstructions();
-updateAllKeyEls();
-document.querySelectorAll('.card').forEach((cardEl) => {
-  cardEl.addEventListener('click', cardClickHandler);
-});
+const startWizard = () => {
+  document.addEventListener('keydown', keyDownHandler);
+  document.querySelectorAll('.card').forEach((cardEl) => {
+    cardEl.addEventListener('click', cardClickHandler);
+  });
+
+  initWizardSettings();
+  updateAllEls();
+};
+
+startWizard();
