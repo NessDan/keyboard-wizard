@@ -73,6 +73,22 @@ const initWizardSettings = () => {
   }
 };
 
+const whereIsKeyUsed = (key) => {
+  // Check if a key is already bound to a button
+  let findParentProp, findProp;
+
+  let keyUsed = Object.keys(wizardSettings).some((parentProp) => {
+    return Object.keys(wizardSettings[parentProp]).some((prop) => {
+      if (wizardSettings[parentProp][prop] === key) {
+        findParentProp = parentProp;
+        findProp = prop;
+        return true;
+      }
+    });
+  });
+  return [keyUsed, findParentProp, findProp];
+};
+
 const updateInstructions = () => {
   if (currentStep().message) {
     instructionsEl.innerText = currentStep().message;
@@ -113,27 +129,14 @@ const updateAllEls = () => {
   updateActiveCard();
 };
 
-let wizardStep = 0;
-
-const steps = [
-  {
-    keyToSet: 'Left Stick Up',
-    parentProp: 'leftStick',
-    propertyToModify: 'up',
-  },
-  {
-    keyToSet: 'Left Stick Down',
-    parentProp: 'leftStick',
-    propertyToModify: 'down',
-  },
-  {
-    message: "You're all set! Click the button below to save your settings.",
-  },
-];
-
 const keyDownHandler = (event) => {
   event.preventDefault();
   if (wizardStep === steps.length - 1) {
+    return;
+  }
+  const [keyUsed, foundParentProp, foundProp] = whereIsKeyUsed(event.code);
+  if (keyUsed) {
+    // TODO: Show red on key that is already bound
     return;
   }
   const parentProp = currentStep().parentProp;
@@ -160,6 +163,24 @@ const cardClickHandler = (event) => {
   wizardStep = step;
   updateAllEls();
 };
+
+let wizardStep = 0;
+
+const steps = [
+  {
+    keyToSet: 'Left Stick Up',
+    parentProp: 'leftStick',
+    propertyToModify: 'up',
+  },
+  {
+    keyToSet: 'Left Stick Down',
+    parentProp: 'leftStick',
+    propertyToModify: 'down',
+  },
+  {
+    message: "You're all set! Click the button below to save your settings.",
+  },
+];
 
 const startWizard = () => {
   document.addEventListener('keydown', keyDownHandler);
