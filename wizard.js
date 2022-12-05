@@ -73,13 +73,20 @@ const initWizardSettings = () => {
   }
 };
 
-const whereIsKeyUsed = (key) => {
+const whereIsKeyUsed = (keyboardKey) => {
   // Check if a key is already bound to a button
   let findParentProp, findProp;
 
   let keyUsed = Object.keys(wizardSettings).some((parentProp) => {
     return Object.keys(wizardSettings[parentProp]).some((prop) => {
-      if (wizardSettings[parentProp][prop] === key) {
+      if (
+        parentProp === currentStep().parentProp &&
+        prop === currentStep().propertyToModify
+      ) {
+        // Checking if the key being checked is currently being set if true skip
+        return false;
+      }
+      if (wizardSettings[parentProp][prop] === keyboardKey) {
         findParentProp = parentProp;
         findProp = prop;
         return true;
@@ -123,10 +130,23 @@ const updateActiveCard = () => {
   nextActiveCardEl?.ariaPressed ?? 'true';
 };
 
+const addErrorToCard = (parentProp, prop) => {
+  const cardEl = document.querySelector(`#${parentProp}-${prop}-card`);
+  cardEl.classList.add('error');
+};
+
+const removeAllCardErrors = () => {
+  const errorCardEls = document.querySelectorAll('.card.error');
+  errorCardEls.forEach((errorCardEl) => {
+    errorCardEl.classList.remove('error');
+  });
+};
+
 const updateAllEls = () => {
   updateInstructions();
   updateAllKeyEls();
   updateActiveCard();
+  removeAllCardErrors();
 };
 
 const keyDownHandler = (event) => {
@@ -134,9 +154,11 @@ const keyDownHandler = (event) => {
   if (wizardStep === steps.length - 1) {
     return;
   }
-  const [keyUsed, foundParentProp, foundProp] = whereIsKeyUsed(event.code);
+  const [keyUsed, duplicateParentProp, duplicateProp] = whereIsKeyUsed(
+    event.code
+  );
   if (keyUsed) {
-    // TODO: Show red on key that is already bound
+    addErrorToCard(duplicateParentProp, duplicateProp);
     return;
   }
   const parentProp = currentStep().parentProp;
