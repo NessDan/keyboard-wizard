@@ -181,7 +181,7 @@
           </div>
         </div>
         <div id="menu-div-group" class="config-group">
-          <header class="config-group-header">Menu div</header>
+          <header class="config-group-header">Menu Buttons</header>
           <div class="card-holder">
             <div
               class="card"
@@ -233,63 +233,6 @@
               <header class="card-header">Capture</header>
               <div class="card-body">
                 <div class="key" id="system-capture-key"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div id="dpad-group" class="config-group">
-          <header class="config-group-header">DPad Group</header>
-          <div class="card-holder">
-            <div
-              class="card"
-              id="dpad-up-card"
-              role="button"
-              aria-pressed="false"
-              data-parentprop="dpad"
-              data-prop="up"
-            >
-              <header class="card-header">Up</header>
-              <div class="card-body">
-                <div class="key" id="dpad-up-key"></div>
-              </div>
-            </div>
-            <div
-              class="card"
-              id="dpad-down-card"
-              role="button"
-              aria-pressed="false"
-              data-parentprop="dpad"
-              data-prop="down"
-            >
-              <header class="card-header">Down</header>
-              <div class="card-body">
-                <div class="key" id="dpad-down-key"></div>
-              </div>
-            </div>
-            <div
-              class="card"
-              id="dpad-left-card"
-              role="button"
-              aria-pressed="false"
-              data-parentprop="dpad"
-              data-prop="left"
-            >
-              <header class="card-header">Left</header>
-              <div class="card-body">
-                <div class="key" id="dpad-left-key"></div>
-              </div>
-            </div>
-            <div
-              class="card"
-              id="dpad-right-card"
-              role="button"
-              aria-pressed="false"
-              data-parentprop="dpad"
-              data-prop="right"
-            >
-              <header class="card-header">Right</header>
-              <div class="card-body">
-                <div class="key" id="dpad-right-key"></div>
               </div>
             </div>
           </div>
@@ -351,33 +294,90 @@
             </div>
           </div>
         </div>
-        <div id="misc-group" class="config-group">
-          <header class="config-group-header">Extra Settings</header>
+        <div id="dpad-group" class="config-group">
+          <header class="config-group-header">DPad Group</header>
           <div class="card-holder">
             <div
               class="card"
-              id="misc-leftStickClick-card"
+              id="dpad-up-card"
               role="button"
               aria-pressed="false"
-              data-parentprop="misc"
-              data-prop="leftStickClick"
+              data-parentprop="dpad"
+              data-prop="up"
             >
-              <header class="card-header">Left Stick Click</header>
+              <header class="card-header">Up</header>
               <div class="card-body">
-                <div class="key" id="misc-leftStickClick-key"></div>
+                <div class="key" id="dpad-up-key"></div>
               </div>
             </div>
             <div
               class="card"
-              id="misc-rightStickClick-card"
+              id="dpad-down-card"
+              role="button"
+              aria-pressed="false"
+              data-parentprop="dpad"
+              data-prop="down"
+            >
+              <header class="card-header">Down</header>
+              <div class="card-body">
+                <div class="key" id="dpad-down-key"></div>
+              </div>
+            </div>
+            <div
+              class="card"
+              id="dpad-left-card"
+              role="button"
+              aria-pressed="false"
+              data-parentprop="dpad"
+              data-prop="left"
+            >
+              <header class="card-header">Left</header>
+              <div class="card-body">
+                <div class="key" id="dpad-left-key"></div>
+              </div>
+            </div>
+            <div
+              class="card"
+              id="dpad-right-card"
+              role="button"
+              aria-pressed="false"
+              data-parentprop="dpad"
+              data-prop="right"
+            >
+              <header class="card-header">Right</header>
+              <div class="card-body">
+                <div class="key" id="dpad-right-key"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="misc-group" class="config-group">
+          <header class="config-group-header">Misc. Settings</header>
+          <div class="card-holder">
+            <div
+              class="card"
+              id="misc-leftStickPress-card"
               role="button"
               aria-pressed="false"
               data-parentprop="misc"
-              data-prop="rightStickClick"
+              data-prop="leftStickPress"
             >
-              <header class="card-header">Right Stick Click</header>
+              <header class="card-header">Left Stick Press</header>
               <div class="card-body">
-                <div class="key" id="misc-rightStickClick-key"></div>
+                <div class="key" id="misc-leftStickPress-key"></div>
+              </div>
+            </div>
+            <div
+              class="card"
+              id="misc-rightStickPress-card"
+              role="button"
+              aria-pressed="false"
+              data-parentprop="misc"
+              data-prop="rightStickPress"
+            >
+              <header class="card-header">Right Stick Press</header>
+              <div class="card-body">
+                <div class="key" id="misc-rightStickPress-key"></div>
               </div>
             </div>
           </div>
@@ -386,7 +386,11 @@
       <div id="directions-wrapper">
         <p id="directions"></p>
       </div>
-      <footer id="footer"></footer>
+      <footer id="footer">
+        <button id="reset-button">Reset and Start Over</button>
+        <button id="advanced-mode-button">Convert To Advanced Mapping</button>
+        <button id="save-to-adapter-button">Save To Adapter</button>
+      </footer>
     </div>
     <script src="wizard.js"></script>
   </body>

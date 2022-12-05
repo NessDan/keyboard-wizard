@@ -56,5 +56,17 @@
 }
 
 .error {
-  color: red;
+  animation: fade 2s ease-in-out;
+}
+
+@keyframes fade {
+  0%,
+  100% {
+    color: inherit;
+    box-shadow: 0px 0px 0px 0px red;
+  }
+  50% {
+    color: red;
+    box-shadow: 0px 0px 20px 8px red;
+  }
 }

@@ -15,7 +15,8 @@ const loadWizardSettings = () => {
 const eraseWizardSettings = () => {
   // Erase the wizard settings from localStorage and the variable in memory
   localStorage.removeItem('wizardSettings');
-  resetWizardSettings();
+  // resetWizardSettings(); // This is not needed because the wizard will be reloaded
+  location.reload();
 };
 
 const resetWizardSettings = () => {
@@ -57,8 +58,8 @@ const resetWizardSettings = () => {
       capture: '',
     },
     misc: {
-      leftStickClick: '',
-      rightStickClick: '',
+      leftStickPress: '',
+      rightStickPress: '',
     },
   };
 };
@@ -132,6 +133,9 @@ const updateActiveCard = () => {
 
 const addErrorToCard = (parentProp, prop) => {
   const cardEl = document.querySelector(`#${parentProp}-${prop}-card`);
+  cardEl.addEventListener('animationend', () => {
+    cardEl?.classList?.remove('error');
+  });
   cardEl.classList.add('error');
 };
 
@@ -200,6 +204,128 @@ const steps = [
     propertyToModify: 'down',
   },
   {
+    keyToSet: 'Left Stick Left',
+    parentProp: 'leftStick',
+    propertyToModify: 'left',
+  },
+  {
+    keyToSet: 'Left Stick Right',
+    parentProp: 'leftStick',
+    propertyToModify: 'right',
+  },
+  {
+    keyToSet: 'A Button',
+    parentProp: 'buttons',
+    propertyToModify: 'a',
+  },
+  {
+    keyToSet: 'B Button',
+    parentProp: 'buttons',
+    propertyToModify: 'b',
+  },
+  {
+    keyToSet: 'X Button',
+    parentProp: 'buttons',
+    propertyToModify: 'x',
+  },
+  {
+    keyToSet: 'Y Button',
+    parentProp: 'buttons',
+    propertyToModify: 'y',
+  },
+  {
+    keyToSet: 'Left Trigger',
+    parentProp: 'triggers',
+    propertyToModify: 'l',
+  },
+  {
+    keyToSet: 'Right Trigger',
+    parentProp: 'triggers',
+    propertyToModify: 'r',
+  },
+  {
+    keyToSet: 'ZL Trigger',
+    parentProp: 'triggers',
+    propertyToModify: 'zl',
+  },
+  {
+    keyToSet: 'ZR Trigger',
+    parentProp: 'triggers',
+    propertyToModify: 'zr',
+  },
+  {
+    keyToSet: 'Start/+ Button',
+    parentProp: 'system',
+    propertyToModify: 'start',
+  },
+  {
+    keyToSet: 'Select/- Button',
+    parentProp: 'system',
+    propertyToModify: 'select',
+  },
+  {
+    keyToSet: 'Home Button',
+    parentProp: 'system',
+    propertyToModify: 'home',
+  },
+  {
+    keyToSet: 'Capture Button',
+    parentProp: 'system',
+    propertyToModify: 'capture',
+  },
+
+  {
+    keyToSet: 'Right Stick Up',
+    parentProp: 'rightStick',
+    propertyToModify: 'up',
+  },
+  {
+    keyToSet: 'Right Stick Down',
+    parentProp: 'rightStick',
+    propertyToModify: 'down',
+  },
+  {
+    keyToSet: 'Right Stick Left',
+    parentProp: 'rightStick',
+    propertyToModify: 'left',
+  },
+  {
+    keyToSet: 'Right Stick Right',
+    parentProp: 'rightStick',
+    propertyToModify: 'right',
+  },
+  {
+    keyToSet: 'DPad Up',
+    parentProp: 'dpad',
+    propertyToModify: 'up',
+  },
+  {
+    keyToSet: 'DPad Down',
+    parentProp: 'dpad',
+    propertyToModify: 'down',
+  },
+  {
+    keyToSet: 'DPad Left',
+    parentProp: 'dpad',
+    propertyToModify: 'left',
+  },
+  {
+    keyToSet: 'DPad Right',
+    parentProp: 'dpad',
+    propertyToModify: 'right',
+  },
+  {
+    keyToSet: 'Left Stick Press',
+    parentProp: 'misc',
+    propertyToModify: 'leftStickPress',
+  },
+  {
+    keyToSet: 'Right Stick Press',
+    parentProp: 'misc',
+    propertyToModify: 'rightStickPress',
+  },
+
+  {
     message: "You're all set! Click the button below to save your settings.",
   },
 ];
@@ -208,6 +334,10 @@ const startWizard = () => {
   document.addEventListener('keydown', keyDownHandler);
   document.querySelectorAll('.card').forEach((cardEl) => {
     cardEl.addEventListener('click', cardClickHandler);
+  });
+  document.querySelector('#reset-button').addEventListener('click', () => {
+    eraseWizardSettings();
+    updateAllEls();
   });
 
   initWizardSettings();
