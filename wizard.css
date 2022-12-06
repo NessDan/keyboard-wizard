@@ -61,6 +61,10 @@
   animation: fade 2s ease-in-out;
 }
 
+.hidden {
+  display: none;
+}
+
 @keyframes fade {
   0%,
   100% {

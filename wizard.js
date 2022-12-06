@@ -1,4 +1,7 @@
 const instructionsEl = document.getElementById('directions');
+const numberWrapperEl = document.getElementById('number-value-wrapper');
+const numberInputEl = document.getElementById('number-value-input');
+const numberLabel = document.querySelector('#number-input-value');
 const currentStep = () => steps[wizardStep];
 let wizardSettings;
 
@@ -60,6 +63,12 @@ const resetWizardSettings = () => {
     misc: {
       leftStickPress: '',
       rightStickPress: '',
+      walk: '',
+      walkSpeed: '',
+    },
+    socd: {
+      leftRight: '',
+      upDown: '',
     },
   };
 };
@@ -102,11 +111,13 @@ const updateInstructions = () => {
     instructionsEl.innerText = currentStep().message;
   } else if (currentStep().keyToSet) {
     instructionsEl.innerText = `Press key for: ${currentStep().keyToSet}`;
+  } else if (currentStep().valueToSet) {
+    instructionsEl.innerText = `Set value for: ${currentStep().valueToSet}`;
   }
 };
 
 const updateKeyEl = (parentProp, prop) => {
-  const keyEl = document.querySelector(`#${parentProp}-${prop}-key`);
+  const keyEl = document.querySelector(`#${parentProp}-${prop}-value`);
   keyEl.innerText = wizardSettings[parentProp][prop];
 };
 
@@ -131,6 +142,14 @@ const updateActiveCard = () => {
   nextActiveCardEl?.ariaPressed ?? 'true';
 };
 
+const showOrHideNumberWrapper = () => {
+  if (currentStep().inputType === 'number') {
+    numberWrapperEl.classList.remove('hidden');
+  } else {
+    numberWrapperEl.classList.add('hidden');
+  }
+};
+
 const addErrorToCard = (parentProp, prop) => {
   const cardEl = document.querySelector(`#${parentProp}-${prop}-card`);
   cardEl.addEventListener('animationend', () => {
@@ -148,16 +167,38 @@ const removeAllCardErrors = () => {
 
 const updateAllEls = () => {
   updateInstructions();
+  showOrHideNumberWrapper();
   updateAllKeyEls();
   updateActiveCard();
   removeAllCardErrors();
 };
 
-const keyDownHandler = (event) => {
-  event.preventDefault();
-  if (wizardStep === steps.length - 1) {
-    return;
+const setValueToCurrentStep = (value) => {
+  const parentProp = currentStep().parentProp;
+  const prop = currentStep().propertyToModify;
+  wizardSettings[parentProp][prop] = value;
+  wizardStep += 1;
+  updateAllEls();
+  saveWizardSettings();
+};
+
+const numberInputKeyDownHandler = (event) => {
+  switch (event.code) {
+    case 'Enter':
+      setValueToCurrentStep(numberInputEl.value);
+      break;
+    case 'ArrowDown':
+    case 'ArrowLeft':
+      numberInputEl.stepDown();
+      break;
+    case 'ArrowUp':
+    case 'ArrowRight':
+      numberInputEl.stepUp();
+      break;
   }
+};
+
+const keyboardKeyDownHandler = (event) => {
   const [keyUsed, duplicateParentProp, duplicateProp] = whereIsKeyUsed(
     event.code
   );
@@ -165,12 +206,22 @@ const keyDownHandler = (event) => {
     addErrorToCard(duplicateParentProp, duplicateProp);
     return;
   }
-  const parentProp = currentStep().parentProp;
-  const prop = currentStep().propertyToModify;
-  wizardSettings[parentProp][prop] = event.code;
-  wizardStep += 1;
-  updateAllEls();
-  saveWizardSettings();
+  setValueToCurrentStep(event.code);
+};
+
+const keyDownRouter = (event) => {
+  event.preventDefault();
+
+  // last step should be success message
+  if (wizardStep === steps.length - 1) {
+    return;
+  }
+  if (currentStep().inputType === 'number') {
+    numberInputKeyDownHandler(event);
+    return;
+  } else {
+    keyboardKeyDownHandler(event);
+  }
 };
 
 const cardClickHandler = (event) => {
@@ -324,6 +375,17 @@ const steps = [
     parentProp: 'misc',
     propertyToModify: 'rightStickPress',
   },
+  {
+    keyToSet: 'Walk',
+    parentProp: 'misc',
+    propertyToModify: 'walk',
+  },
+  {
+    valueToSet: 'Walk Speed',
+    parentProp: 'misc',
+    propertyToModify: 'walkSpeed',
+    inputType: 'number',
+  },
 
   {
     message: "You're all set! Click the button below to save your settings.",
@@ -331,13 +393,20 @@ const steps = [
 ];
 
 const startWizard = () => {
-  document.addEventListener('keydown', keyDownHandler);
+  document.addEventListener('keydown', keyDownRouter);
   document.querySelectorAll('.card').forEach((cardEl) => {
     cardEl.addEventListener('click', cardClickHandler);
   });
   document.querySelector('#reset-button').addEventListener('click', () => {
     eraseWizardSettings();
     updateAllEls();
+  });
+
+  numberInputEl.addEventListener('input', () => {
+    numberLabel.innerText = numberInputEl.value;
+  });
+  document.querySelector('#number-value-save').addEventListener('click', () => {
+    setValueToCurrentStep(numberInputEl.value);
   });
 
   initWizardSettings();
