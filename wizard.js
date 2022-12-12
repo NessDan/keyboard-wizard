@@ -74,6 +74,14 @@ const updateActiveCard = () => {
   nextActiveCardEl?.ariaPressed ?? 'true';
 };
 
+const convertMultiOptionsHtml = () => {
+  const multiListEl = document.getElementById('multi-input-values');
+  const htmlList = currentStep().options.reduce((acc, option) => {
+    return acc + `<li id='multi-option-${option.value}'>${option.label}</li>`;
+  }, '');
+  multiListEl.innerHTML = htmlList;
+};
+
 const showOrHideInstructionsWrapper = () => {
   if (currentStep().stepType === 'number') {
     numberWrapperEl.classList.remove('hidden');
@@ -82,11 +90,7 @@ const showOrHideInstructionsWrapper = () => {
   }
   if (currentStep().stepType === 'multi') {
     multiWrapperEl.classList.remove('hidden');
-    const multiListEl = document.getElementById('multi-input-values');
-    const htmlList = currentStep().options.reduce((acc, option) => {
-      return acc + `<li id='multi-option-${option.value}'>${option.label}</li>`;
-    }, '');
-    multiListEl.innerHTML = htmlList;
+    convertMultiOptionsHtml();
   } else {
     multiWrapperEl.classList.add('hidden');
   }
@@ -122,6 +126,18 @@ const setValueToCurrentStep = (value) => {
   wizardStep += 1;
   updateAllEls();
   saveWizardSettings();
+};
+
+const multiValueKeyDownHandler = (event) => {
+  // Grabs the last character of number codes 'Digit1' -> 1 Or 'Numpad1' -> 1
+  // Then checks if the number is a valid option in our multiselect array
+  if (event.code.startsWith('Digit') || event.code.startsWith('Numpad')) {
+    const digit = Number(event.code.slice(-1));
+    const option = currentStep().options[digit - 1];
+    if (option) {
+      setValueToCurrentStep(option.value);
+    }
+  }
 };
 
 const numberInputKeyDownHandler = (event) => {
@@ -163,6 +179,8 @@ const keyDownRouter = (event) => {
   if (currentStep().stepType === 'number') {
     numberInputKeyDownHandler(event);
     return;
+  } else if (currentStep().stepType === 'multi') {
+    multiValueKeyDownHandler(event);
   } else {
     keyboardKeyDownHandler(event);
   }
