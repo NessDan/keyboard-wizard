@@ -2,6 +2,7 @@ const instructionsEl = document.getElementById('directions');
 const numberWrapperEl = document.getElementById('number-value-wrapper');
 const numberInputEl = document.getElementById('number-value-input');
 const numberLabel = document.querySelector('#number-input-value');
+const inputEvent = new Event('input');
 const currentStep = () => steps[wizardStep];
 let wizardSettings;
 
@@ -143,7 +144,7 @@ const updateActiveCard = () => {
 };
 
 const showOrHideNumberWrapper = () => {
-  if (currentStep().inputType === 'number') {
+  if (currentStep().stepType === 'number') {
     numberWrapperEl.classList.remove('hidden');
   } else {
     numberWrapperEl.classList.add('hidden');
@@ -190,10 +191,12 @@ const numberInputKeyDownHandler = (event) => {
     case 'ArrowDown':
     case 'ArrowLeft':
       numberInputEl.stepDown();
+      numberInputEl.dispatchEvent(inputEvent);
       break;
     case 'ArrowUp':
     case 'ArrowRight':
       numberInputEl.stepUp();
+      numberInputEl.dispatchEvent(inputEvent);
       break;
   }
 };
@@ -216,7 +219,7 @@ const keyDownRouter = (event) => {
   if (wizardStep === steps.length - 1) {
     return;
   }
-  if (currentStep().inputType === 'number') {
+  if (currentStep().stepType === 'number') {
     numberInputKeyDownHandler(event);
     return;
   } else {
@@ -384,7 +387,7 @@ const steps = [
     valueToSet: 'Walk Speed',
     parentProp: 'misc',
     propertyToModify: 'walkSpeed',
-    inputType: 'number',
+    stepType: 'number',
   },
 
   {
