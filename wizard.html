@@ -417,7 +417,7 @@
               role="button"
               aria-pressed="false"
               data-parentprop="socd"
-              data-prop="leftright"
+              data-prop="leftRight"
             >
               <header class="card-header">Left-Right</header>
               <div class="card-body">
@@ -430,7 +430,7 @@
               role="button"
               aria-pressed="false"
               data-parentprop="socd"
-              data-prop="updown"
+              data-prop="upDown"
             >
               <header class="card-header">Up-Down</header>
               <div class="card-body">
@@ -454,6 +454,9 @@
           </p>
           <button id="number-value-save">Save</button>
         </div>
+        <div id="multi-value-wrapper" class="hidden">
+          <ol id="multi-input-values"></ol>
+        </div>
       </div>
       <footer id="footer">
         <button id="reset-button">Reset and Start Over</button>
@@ -461,6 +464,6 @@
         <button id="save-to-adapter-button">Save To Adapter</button>
       </footer>
     </div>
-    <script src="wizard.js"></script>
+    <script src="wizard.js" type="module"></script>
   </body>
 </html>

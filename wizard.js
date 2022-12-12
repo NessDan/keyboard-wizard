@@ -1,88 +1,19 @@
+import steps from './wizard-steps.js';
+import {
+  wizardSettings,
+  initWizardSettings,
+  resetWizardSettings,
+  eraseWizardSettings,
+  loadWizardSettings,
+  saveWizardSettings,
+} from './wizard-settings-manager.js';
 const instructionsEl = document.getElementById('directions');
 const numberWrapperEl = document.getElementById('number-value-wrapper');
+const multiWrapperEl = document.getElementById('multi-value-wrapper');
 const numberInputEl = document.getElementById('number-value-input');
 const numberLabel = document.querySelector('#number-input-value');
 const inputEvent = new Event('input');
 const currentStep = () => steps[wizardStep];
-let wizardSettings;
-
-const saveWizardSettings = () => {
-  // Save the wizard settings to localStorage
-  localStorage.setItem('wizardSettings', JSON.stringify(wizardSettings));
-};
-
-const loadWizardSettings = () => {
-  // Load the wizard settings from localStorage
-  return localStorage.getItem('wizardSettings');
-};
-
-const eraseWizardSettings = () => {
-  // Erase the wizard settings from localStorage and the variable in memory
-  localStorage.removeItem('wizardSettings');
-  // resetWizardSettings(); // This is not needed because the wizard will be reloaded
-  location.reload();
-};
-
-const resetWizardSettings = () => {
-  wizardSettings = {
-    leftStick: {
-      up: '',
-      down: '',
-      left: '',
-      right: '',
-    },
-    rightStick: {
-      up: '',
-      down: '',
-      left: '',
-      right: '',
-    },
-    buttons: {
-      a: '',
-      b: '',
-      x: '',
-      y: '',
-    },
-    triggers: {
-      l: '',
-      r: '',
-      zl: '',
-      zr: '',
-    },
-    dpad: {
-      up: '',
-      down: '',
-      left: '',
-      right: '',
-    },
-    system: {
-      start: '',
-      select: '',
-      home: '',
-      capture: '',
-    },
-    misc: {
-      leftStickPress: '',
-      rightStickPress: '',
-      walk: '',
-      walkSpeed: '',
-    },
-    socd: {
-      leftRight: '',
-      upDown: '',
-    },
-  };
-};
-
-const initWizardSettings = () => {
-  // Initialize the wizard settings
-  const savedSettings = loadWizardSettings();
-  if (savedSettings) {
-    wizardSettings = JSON.parse(savedSettings);
-  } else {
-    resetWizardSettings();
-  }
-};
 
 const whereIsKeyUsed = (keyboardKey) => {
   // Check if a key is already bound to a button
@@ -108,7 +39,7 @@ const whereIsKeyUsed = (keyboardKey) => {
 };
 
 const updateInstructions = () => {
-  if (currentStep().message) {
+  if (currentStep().stepType === 'message') {
     instructionsEl.innerText = currentStep().message;
   } else if (currentStep().keyToSet) {
     instructionsEl.innerText = `Press key for: ${currentStep().keyToSet}`;
@@ -143,11 +74,21 @@ const updateActiveCard = () => {
   nextActiveCardEl?.ariaPressed ?? 'true';
 };
 
-const showOrHideNumberWrapper = () => {
+const showOrHideInstructionsWrapper = () => {
   if (currentStep().stepType === 'number') {
     numberWrapperEl.classList.remove('hidden');
   } else {
     numberWrapperEl.classList.add('hidden');
+  }
+  if (currentStep().stepType === 'multi') {
+    multiWrapperEl.classList.remove('hidden');
+    const multiListEl = document.getElementById('multi-input-values');
+    const htmlList = currentStep().options.reduce((acc, option) => {
+      return acc + `<li id='multi-option-${option.value}'>${option.label}</li>`;
+    }, '');
+    multiListEl.innerHTML = htmlList;
+  } else {
+    multiWrapperEl.classList.add('hidden');
   }
 };
 
@@ -168,7 +109,7 @@ const removeAllCardErrors = () => {
 
 const updateAllEls = () => {
   updateInstructions();
-  showOrHideNumberWrapper();
+  showOrHideInstructionsWrapper();
   updateAllKeyEls();
   updateActiveCard();
   removeAllCardErrors();
@@ -245,155 +186,6 @@ const cardClickHandler = (event) => {
 };
 
 let wizardStep = 0;
-
-const steps = [
-  {
-    keyToSet: 'Left Stick Up',
-    parentProp: 'leftStick',
-    propertyToModify: 'up',
-  },
-  {
-    keyToSet: 'Left Stick Down',
-    parentProp: 'leftStick',
-    propertyToModify: 'down',
-  },
-  {
-    keyToSet: 'Left Stick Left',
-    parentProp: 'leftStick',
-    propertyToModify: 'left',
-  },
-  {
-    keyToSet: 'Left Stick Right',
-    parentProp: 'leftStick',
-    propertyToModify: 'right',
-  },
-  {
-    keyToSet: 'A Button',
-    parentProp: 'buttons',
-    propertyToModify: 'a',
-  },
-  {
-    keyToSet: 'B Button',
-    parentProp: 'buttons',
-    propertyToModify: 'b',
-  },
-  {
-    keyToSet: 'X Button',
-    parentProp: 'buttons',
-    propertyToModify: 'x',
-  },
-  {
-    keyToSet: 'Y Button',
-    parentProp: 'buttons',
-    propertyToModify: 'y',
-  },
-  {
-    keyToSet: 'Left Trigger',
-    parentProp: 'triggers',
-    propertyToModify: 'l',
-  },
-  {
-    keyToSet: 'Right Trigger',
-    parentProp: 'triggers',
-    propertyToModify: 'r',
-  },
-  {
-    keyToSet: 'ZL Trigger',
-    parentProp: 'triggers',
-    propertyToModify: 'zl',
-  },
-  {
-    keyToSet: 'ZR Trigger',
-    parentProp: 'triggers',
-    propertyToModify: 'zr',
-  },
-  {
-    keyToSet: 'Start/+ Button',
-    parentProp: 'system',
-    propertyToModify: 'start',
-  },
-  {
-    keyToSet: 'Select/- Button',
-    parentProp: 'system',
-    propertyToModify: 'select',
-  },
-  {
-    keyToSet: 'Home Button',
-    parentProp: 'system',
-    propertyToModify: 'home',
-  },
-  {
-    keyToSet: 'Capture Button',
-    parentProp: 'system',
-    propertyToModify: 'capture',
-  },
-
-  {
-    keyToSet: 'Right Stick Up',
-    parentProp: 'rightStick',
-    propertyToModify: 'up',
-  },
-  {
-    keyToSet: 'Right Stick Down',
-    parentProp: 'rightStick',
-    propertyToModify: 'down',
-  },
-  {
-    keyToSet: 'Right Stick Left',
-    parentProp: 'rightStick',
-    propertyToModify: 'left',
-  },
-  {
-    keyToSet: 'Right Stick Right',
-    parentProp: 'rightStick',
-    propertyToModify: 'right',
-  },
-  {
-    keyToSet: 'DPad Up',
-    parentProp: 'dpad',
-    propertyToModify: 'up',
-  },
-  {
-    keyToSet: 'DPad Down',
-    parentProp: 'dpad',
-    propertyToModify: 'down',
-  },
-  {
-    keyToSet: 'DPad Left',
-    parentProp: 'dpad',
-    propertyToModify: 'left',
-  },
-  {
-    keyToSet: 'DPad Right',
-    parentProp: 'dpad',
-    propertyToModify: 'right',
-  },
-  {
-    keyToSet: 'Left Stick Press',
-    parentProp: 'misc',
-    propertyToModify: 'leftStickPress',
-  },
-  {
-    keyToSet: 'Right Stick Press',
-    parentProp: 'misc',
-    propertyToModify: 'rightStickPress',
-  },
-  {
-    keyToSet: 'Walk',
-    parentProp: 'misc',
-    propertyToModify: 'walk',
-  },
-  {
-    valueToSet: 'Walk Speed',
-    parentProp: 'misc',
-    propertyToModify: 'walkSpeed',
-    stepType: 'number',
-  },
-
-  {
-    message: "You're all set! Click the button below to save your settings.",
-  },
-];
 
 const startWizard = () => {
   document.addEventListener('keydown', keyDownRouter);
