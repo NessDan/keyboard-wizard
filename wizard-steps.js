@@ -1,4 +1,4 @@
-const steps = [
+export const steps = [
   {
     keyToSet: "Left Stick Up",
     parentProp: "leftStick",
@@ -177,5 +177,3 @@ const steps = [
     stepType: "message",
   },
 ];
-
-export default steps;

@@ -1,4 +1,4 @@
-import steps from "./wizard-steps.js";
+import { steps } from "./wizard-steps.js";
 import {
   wizardSettings,
   initWizardSettings,
