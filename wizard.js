@@ -1,18 +1,16 @@
-import steps from './wizard-steps.js';
+import steps from "./wizard-steps.js";
 import {
   wizardSettings,
   initWizardSettings,
-  resetWizardSettings,
   eraseWizardSettings,
-  loadWizardSettings,
   saveWizardSettings,
-} from './wizard-settings-manager.js';
-const instructionsEl = document.getElementById('directions');
-const numberWrapperEl = document.getElementById('number-value-wrapper');
-const multiWrapperEl = document.getElementById('multi-value-wrapper');
-const numberInputEl = document.getElementById('number-value-input');
-const numberLabel = document.querySelector('#number-input-value');
-const inputEvent = new Event('input');
+} from "./wizard-settings-manager.js";
+const instructionsEl = document.getElementById("directions");
+const numberWrapperEl = document.getElementById("number-value-wrapper");
+const multiWrapperEl = document.getElementById("multi-value-wrapper");
+const numberInputEl = document.getElementById("number-value-input");
+const numberLabel = document.querySelector("#number-input-value");
+const inputEvent = new Event("input");
 const currentStep = () => steps[wizardStep];
 
 const whereIsKeyUsed = (keyboardKey) => {
@@ -39,7 +37,7 @@ const whereIsKeyUsed = (keyboardKey) => {
 };
 
 const updateInstructions = () => {
-  if (currentStep().stepType === 'message') {
+  if (currentStep().stepType === "message") {
     instructionsEl.innerText = currentStep().message;
   } else if (currentStep().keyToSet) {
     instructionsEl.innerText = `Press key for: ${currentStep().keyToSet}`;
@@ -67,47 +65,47 @@ const updateActiveCard = () => {
   const nextActiveCardEl = document.querySelector(
     `#${parentProp}-${prop}-card`
   );
-  const prevActiveCardEl = document.querySelector('.card.active');
-  prevActiveCardEl?.classList?.remove('active');
-  prevActiveCardEl?.ariaPressed ?? 'false';
-  nextActiveCardEl?.classList?.add('active');
-  nextActiveCardEl?.ariaPressed ?? 'true';
+  const prevActiveCardEl = document.querySelector(".card.active");
+  prevActiveCardEl?.classList?.remove("active");
+  prevActiveCardEl?.ariaPressed ?? "false";
+  nextActiveCardEl?.classList?.add("active");
+  nextActiveCardEl?.ariaPressed ?? "true";
 };
 
 const convertMultiOptionsHtml = () => {
-  const multiListEl = document.getElementById('multi-input-values');
+  const multiListEl = document.getElementById("multi-input-values");
   const htmlList = currentStep().options.reduce((acc, option) => {
     return acc + `<li id='multi-option-${option.value}'>${option.label}</li>`;
-  }, '');
+  }, "");
   multiListEl.innerHTML = htmlList;
 };
 
 const showOrHideInstructionsWrapper = () => {
-  if (currentStep().stepType === 'number') {
-    numberWrapperEl.classList.remove('hidden');
+  if (currentStep().stepType === "number") {
+    numberWrapperEl.classList.remove("hidden");
   } else {
-    numberWrapperEl.classList.add('hidden');
+    numberWrapperEl.classList.add("hidden");
   }
-  if (currentStep().stepType === 'multi') {
-    multiWrapperEl.classList.remove('hidden');
+  if (currentStep().stepType === "multi") {
+    multiWrapperEl.classList.remove("hidden");
     convertMultiOptionsHtml();
   } else {
-    multiWrapperEl.classList.add('hidden');
+    multiWrapperEl.classList.add("hidden");
   }
 };
 
 const addErrorToCard = (parentProp, prop) => {
   const cardEl = document.querySelector(`#${parentProp}-${prop}-card`);
-  cardEl.addEventListener('animationend', () => {
-    cardEl?.classList?.remove('error');
+  cardEl.addEventListener("animationend", () => {
+    cardEl?.classList?.remove("error");
   });
-  cardEl.classList.add('error');
+  cardEl.classList.add("error");
 };
 
 const removeAllCardErrors = () => {
-  const errorCardEls = document.querySelectorAll('.card.error');
+  const errorCardEls = document.querySelectorAll(".card.error");
   errorCardEls.forEach((errorCardEl) => {
-    errorCardEl.classList.remove('error');
+    errorCardEl.classList.remove("error");
   });
 };
 
@@ -131,7 +129,7 @@ const setValueToCurrentStep = (value) => {
 const multiValueKeyDownHandler = (event) => {
   // Grabs the last character of number codes 'Digit1' -> 1 Or 'Numpad1' -> 1
   // Then checks if the number is a valid option in our multiselect array
-  if (event.code.startsWith('Digit') || event.code.startsWith('Numpad')) {
+  if (event.code.startsWith("Digit") || event.code.startsWith("Numpad")) {
     const digit = Number(event.code.slice(-1));
     const option = currentStep().options[digit - 1];
     if (option) {
@@ -142,16 +140,16 @@ const multiValueKeyDownHandler = (event) => {
 
 const numberInputKeyDownHandler = (event) => {
   switch (event.code) {
-    case 'Enter':
+    case "Enter":
       setValueToCurrentStep(numberInputEl.value);
       break;
-    case 'ArrowDown':
-    case 'ArrowLeft':
+    case "ArrowDown":
+    case "ArrowLeft":
       numberInputEl.stepDown();
       numberInputEl.dispatchEvent(inputEvent);
       break;
-    case 'ArrowUp':
-    case 'ArrowRight':
+    case "ArrowUp":
+    case "ArrowRight":
       numberInputEl.stepUp();
       numberInputEl.dispatchEvent(inputEvent);
       break;
@@ -176,10 +174,10 @@ const keyDownRouter = (event) => {
   if (wizardStep === steps.length - 1) {
     return;
   }
-  if (currentStep().stepType === 'number') {
+  if (currentStep().stepType === "number") {
     numberInputKeyDownHandler(event);
     return;
-  } else if (currentStep().stepType === 'multi') {
+  } else if (currentStep().stepType === "multi") {
     multiValueKeyDownHandler(event);
   } else {
     keyboardKeyDownHandler(event);
@@ -187,7 +185,7 @@ const keyDownRouter = (event) => {
 };
 
 const cardClickHandler = (event) => {
-  const cardEl = event.target.closest('.card');
+  const cardEl = event.target.closest(".card");
   if (!cardEl) {
     return;
   }
@@ -206,19 +204,19 @@ const cardClickHandler = (event) => {
 let wizardStep = 0;
 
 const startWizard = () => {
-  document.addEventListener('keydown', keyDownRouter);
-  document.querySelectorAll('.card').forEach((cardEl) => {
-    cardEl.addEventListener('click', cardClickHandler);
+  document.addEventListener("keydown", keyDownRouter);
+  document.querySelectorAll(".card").forEach((cardEl) => {
+    cardEl.addEventListener("click", cardClickHandler);
   });
-  document.querySelector('#reset-button').addEventListener('click', () => {
+  document.querySelector("#reset-button").addEventListener("click", () => {
     eraseWizardSettings();
     updateAllEls();
   });
 
-  numberInputEl.addEventListener('input', () => {
+  numberInputEl.addEventListener("input", () => {
     numberLabel.innerText = numberInputEl.value;
   });
-  document.querySelector('#number-value-save').addEventListener('click', () => {
+  document.querySelector("#number-value-save").addEventListener("click", () => {
     setValueToCurrentStep(numberInputEl.value);
   });
 
