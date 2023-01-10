@@ -5,6 +5,8 @@ import {
   eraseWizardSettingsLocalStorage,
   saveWizardSettingsLocalStorage,
 } from "./wizard-settings-manager.js";
+import { wizardToAdvanced } from "./wizard-to-advance.js";
+import { mappingsToBinary } from "./shared/hardware/web-to-hardware-config.js";
 const instructionsEl = document.getElementById("directions");
 const numberWrapperEl = document.getElementById("number-value-wrapper");
 const multiWrapperEl = document.getElementById("multi-value-wrapper");
@@ -212,7 +214,15 @@ const startWizard = () => {
     eraseWizardSettingsLocalStorage();
     updateAllEls();
   });
-
+  document
+    .querySelector("#save-to-adapter-button")
+    .addEventListener("click", () => {
+      const advancedVersion = wizardToAdvanced(wizardSettings);
+      const binaryConfig = mappingsToBinary([
+        { version: "1.0.0", configs: advancedVersion },
+      ]);
+      console.log(binaryConfig);
+    });
   numberInputEl.addEventListener("input", () => {
     numberLabel.innerText = numberInputEl.value;
   });

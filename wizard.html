@@ -4,6 +4,21 @@
     <meta charset="utf-8" />
     <title>Wizard</title>
     <link rel="stylesheet" href="wizard.css" />
+    <script type="text/javascript">
+      // Sets up the WASM printf to be captured properly
+      let dataBlob;
+      var Module = typeof Module != "undefined" ? Module : {};
+      Module.preRun = [];
+      Module.postRun = [];
+      Module.print = (printOutput) => {
+        dataBlob = printOutput.split(",");
+      };
+      Module.onRuntimeInitialized = () => {
+        window.buildEdgeguardConfigBlob = Module.cwrap("buildguard", null, [
+          "string",
+        ]);
+      };
+    </script>
   </head>
   <body>
     <div id="wizard-wrapper">
@@ -465,5 +480,9 @@
       </footer>
     </div>
     <script src="wizard.js" type="module"></script>
+    <script
+      type="text/javascript"
+      src="shared/hardware/config-generator-wasm/config-generator.js"
+    ></script>
   </body>
 </html>
