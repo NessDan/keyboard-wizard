@@ -1,0 +1,3 @@
+[submodule "keyboard-config-to-hardware"]
+	path = keyboard-config-to-hardware
+	url = git@github.com:NessDan/keyboard-config-to-hardware.git
