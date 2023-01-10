@@ -3,12 +3,12 @@ const currentWizardVersion = "1";
 
 export let wizardSettings;
 
-export const saveWizardSettings = () => {
+export const saveWizardSettingsLocalStorage = () => {
   localStorage.setItem("wizardSettings", JSON.stringify(wizardSettings));
   localStorage.setItem("wizardSettingsVersion", currentWizardVersion);
 };
 
-export const loadWizardSettings = () => {
+export const loadWizardSettingsLocalStorage = () => {
   const existingConfig = localStorage.getItem("wizardSettings");
   const existingConfigVersion = localStorage.getItem("wizardSettingsVersion");
 
@@ -18,7 +18,7 @@ export const loadWizardSettings = () => {
       "Your saved configuration is from an older version of the site and there are breaking changes. Your settings have been erased."
     );
 
-    eraseWizardSettings();
+    eraseWizardSettingsLocalStorage();
 
     return;
   }
@@ -26,7 +26,7 @@ export const loadWizardSettings = () => {
   return existingConfig;
 };
 
-export const eraseWizardSettings = () => {
+export const eraseWizardSettingsLocalStorage = () => {
   // Erase the wizard settings from localStorage and the variable in memory
   localStorage.removeItem("wizardSettings");
   localStorage.removeItem("wizardSettingsVersion");
@@ -86,7 +86,7 @@ export const resetWizardSettings = () => {
 
 export const initWizardSettings = () => {
   // Initialize the wizard settings
-  const savedSettings = loadWizardSettings();
+  const savedSettings = loadWizardSettingsLocalStorage();
   if (savedSettings) {
     wizardSettings = JSON.parse(savedSettings);
   } else {

@@ -2,8 +2,8 @@ import { steps } from "./wizard-steps.js";
 import {
   wizardSettings,
   initWizardSettings,
-  eraseWizardSettings,
-  saveWizardSettings,
+  eraseWizardSettingsLocalStorage,
+  saveWizardSettingsLocalStorage,
 } from "./wizard-settings-manager.js";
 const instructionsEl = document.getElementById("directions");
 const numberWrapperEl = document.getElementById("number-value-wrapper");
@@ -123,7 +123,7 @@ const setValueToCurrentStep = (value) => {
   wizardSettings[parentProp][prop] = value;
   wizardStep += 1;
   updateAllEls();
-  saveWizardSettings();
+  saveWizardSettingsLocalStorage();
 };
 
 const multiValueKeyDownHandler = (event) => {
@@ -209,7 +209,7 @@ const startWizard = () => {
     cardEl.addEventListener("click", cardClickHandler);
   });
   document.querySelector("#reset-button").addEventListener("click", () => {
-    eraseWizardSettings();
+    eraseWizardSettingsLocalStorage();
     updateAllEls();
   });
 
