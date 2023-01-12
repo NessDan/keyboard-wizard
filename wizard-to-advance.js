@@ -1,11 +1,20 @@
-export const wizardToAdvanced = (wizardSettings) => {
+const directionsToAdvanced = (
+  wizardSettings,
+  parentGroup,
+  supportWalk,
+  socdUpDown,
+  socdLeftRight
+) => {
   const allPossibleKeys = [
-    wizardSettings.leftStick.up,
-    wizardSettings.leftStick.down,
-    wizardSettings.leftStick.left,
-    wizardSettings.leftStick.right,
-    wizardSettings.misc.walk,
+    wizardSettings[parentGroup].up,
+    wizardSettings[parentGroup].down,
+    wizardSettings[parentGroup].left,
+    wizardSettings[parentGroup].right,
   ];
+
+  if (supportWalk) {
+    allPossibleKeys.push(wizardSettings.misc.walk);
+  }
 
   const directionToAngle = {
     Up: 0,
@@ -17,6 +26,18 @@ export const wizardToAdvanced = (wizardSettings) => {
     Left: 270,
     UpLeft: 315,
     Neutral: 0,
+  };
+
+  const directionToDpad = {
+    Up: 0,
+    UpRight: 1,
+    Right: 2,
+    DownRight: 3,
+    Down: 4,
+    DownLeft: 5,
+    Left: 6,
+    UpLeft: 7,
+    Neutral: 8,
   };
 
   const everyCombination = (keys) => {
@@ -50,8 +71,8 @@ export const wizardToAdvanced = (wizardSettings) => {
   const upDownLastPressedSocdInput = (keys) => {
     let upDown = "";
     keys.forEach((key) => {
-      if (key === wizardSettings.leftStick.up) upDown = "Up";
-      if (key === wizardSettings.leftStick.down) upDown = "Down";
+      if (key === wizardSettings[parentGroup].up) upDown = "Up";
+      if (key === wizardSettings[parentGroup].down) upDown = "Down";
     });
     return upDown;
   };
@@ -59,8 +80,8 @@ export const wizardToAdvanced = (wizardSettings) => {
   const leftRightLastPressedSocdInput = (keys) => {
     let leftRight = "";
     keys.forEach((key) => {
-      if (key === wizardSettings.leftStick.left) leftRight = "Left";
-      if (key === wizardSettings.leftStick.right) leftRight = "Right";
+      if (key === wizardSettings[parentGroup].left) leftRight = "Left";
+      if (key === wizardSettings[parentGroup].right) leftRight = "Right";
     });
     return leftRight;
   };
@@ -69,13 +90,13 @@ export const wizardToAdvanced = (wizardSettings) => {
     let leftRight = "";
 
     if (
-      keys.includes(wizardSettings.leftStick.left) &&
-      keys.includes(wizardSettings.leftStick.right)
+      keys.includes(wizardSettings[parentGroup].left) &&
+      keys.includes(wizardSettings[parentGroup].right)
     ) {
       leftRight = "";
-    } else if (keys.includes(wizardSettings.leftStick.left)) {
+    } else if (keys.includes(wizardSettings[parentGroup].left)) {
       leftRight = "Left";
-    } else if (keys.includes(wizardSettings.leftStick.right)) {
+    } else if (keys.includes(wizardSettings[parentGroup].right)) {
       leftRight = "Right";
     }
 
@@ -86,13 +107,13 @@ export const wizardToAdvanced = (wizardSettings) => {
     let upDown = "";
 
     if (
-      keys.includes(wizardSettings.leftStick.up) &&
-      keys.includes(wizardSettings.leftStick.down)
+      keys.includes(wizardSettings[parentGroup].up) &&
+      keys.includes(wizardSettings[parentGroup].down)
     ) {
       upDown = "";
-    } else if (keys.includes(wizardSettings.leftStick.up)) {
+    } else if (keys.includes(wizardSettings[parentGroup].up)) {
       upDown = "Up";
-    } else if (keys.includes(wizardSettings.leftStick.down)) {
+    } else if (keys.includes(wizardSettings[parentGroup].down)) {
       upDown = "Down";
     }
 
@@ -102,9 +123,9 @@ export const wizardToAdvanced = (wizardSettings) => {
   const leftRightPreferRightSocdInput = (keys) => {
     let leftRight = "";
 
-    if (keys.includes(wizardSettings.leftStick.right)) {
+    if (keys.includes(wizardSettings[parentGroup].right)) {
       leftRight = "Right";
-    } else if (keys.includes(wizardSettings.leftStick.left)) {
+    } else if (keys.includes(wizardSettings[parentGroup].left)) {
       leftRight = "Left";
     }
 
@@ -114,9 +135,9 @@ export const wizardToAdvanced = (wizardSettings) => {
   const leftRightPreferLeftSocdInput = (keys) => {
     let leftRight = "";
 
-    if (keys.includes(wizardSettings.leftStick.left)) {
+    if (keys.includes(wizardSettings[parentGroup].left)) {
       leftRight = "Left";
-    } else if (keys.includes(wizardSettings.leftStick.right)) {
+    } else if (keys.includes(wizardSettings[parentGroup].right)) {
       leftRight = "Right";
     }
 
@@ -126,9 +147,9 @@ export const wizardToAdvanced = (wizardSettings) => {
   const upDownPreferUpSocdInput = (keys) => {
     let upDown = "";
 
-    if (keys.includes(wizardSettings.leftStick.up)) {
+    if (keys.includes(wizardSettings[parentGroup].up)) {
       upDown = "Up";
-    } else if (keys.includes(wizardSettings.leftStick.down)) {
+    } else if (keys.includes(wizardSettings[parentGroup].down)) {
       upDown = "Down";
     }
 
@@ -138,9 +159,9 @@ export const wizardToAdvanced = (wizardSettings) => {
   const upDownPreferDownSocdInput = (keys) => {
     let upDown = "";
 
-    if (keys.includes(wizardSettings.leftStick.down)) {
+    if (keys.includes(wizardSettings[parentGroup].down)) {
       upDown = "Down";
-    } else if (keys.includes(wizardSettings.leftStick.up)) {
+    } else if (keys.includes(wizardSettings[parentGroup].up)) {
       upDown = "Up";
     }
 
@@ -148,6 +169,7 @@ export const wizardToAdvanced = (wizardSettings) => {
   };
 
   const isWalking = (keys) => {
+    if (!supportWalk) return false;
     if (keys.includes(wizardSettings.misc.walk)) {
       return true;
     }
@@ -169,14 +191,28 @@ export const wizardToAdvanced = (wizardSettings) => {
       // but we need to wrap each key in an array so that
       // the advanced editor can read it.
       const everyElWrappedInArrayCombination = combination.map((key) => [key]);
+      let actionObject = {
+        type: "lstick",
+        angle: 0,
+        stickDistance: 0,
+      };
 
+      switch (parentGroup) {
+        case "rightStick":
+          actionObject.type = "rstick";
+          break;
+        case "dpad":
+          actionObject = {
+            dpad: directionToDpad.Neutral,
+            type: "dpad",
+          };
+          break;
+        default:
+          break;
+      }
       const actionConfig = {
         keys: everyElWrappedInArrayCombination,
-        action: {
-          type: "lstick",
-          angle: 0,
-          stickDistance: 0,
-        },
+        action: actionObject,
       };
 
       const walking = isWalking(combination);
@@ -188,7 +224,7 @@ export const wizardToAdvanced = (wizardSettings) => {
         return;
       }
 
-      switch (wizardSettings.socd.upDown) {
+      switch (socdUpDown) {
         case "lastPressed":
           upDown = upDownLastPressedSocdInput(combination);
           break;
@@ -203,7 +239,7 @@ export const wizardToAdvanced = (wizardSettings) => {
           break;
       }
 
-      switch (wizardSettings.socd.leftRight) {
+      switch (socdLeftRight) {
         case "lastPressed":
           leftRight = leftRightLastPressedSocdInput(combination);
           break;
@@ -220,15 +256,16 @@ export const wizardToAdvanced = (wizardSettings) => {
 
       const direction = `${upDown}${leftRight}`;
 
-      if (direction === "") {
-        actionConfig.action.angle = directionToAngle.Neutral;
-        actionConfig.action.stickDistance = 0;
-      } else {
-        actionConfig.action.angle = directionToAngle[direction];
+      if (direction) {
+        if (parentGroup === "dpad") {
+          actionConfig.action.dpad = directionToDpad[direction];
+        } else {
+          actionConfig.action.angle = directionToAngle[direction];
 
-        actionConfig.action.stickDistance = walking
-          ? wizardSettings.misc.walkSpeed
-          : 100;
+          actionConfig.action.stickDistance = walking
+            ? wizardSettings.misc.walkSpeed
+            : 100;
+        }
       }
 
       edgeguardConfig.push(actionConfig);
@@ -240,4 +277,32 @@ export const wizardToAdvanced = (wizardSettings) => {
   const configsCompleted = allKeyCombinationsToEdgeguardStructure(combinations);
 
   return configsCompleted;
+};
+
+export const wizardToAdvanced = (wizardSettings) => {
+  const leftStick = directionsToAdvanced(
+    wizardSettings,
+    "leftStick",
+    true,
+    wizardSettings.socd.upDown,
+    wizardSettings.socd.leftRight
+  );
+  const dpad = directionsToAdvanced(
+    wizardSettings,
+    "dpad",
+    false,
+    "neutral",
+    "neutral"
+  );
+  const rightStick = directionsToAdvanced(
+    wizardSettings,
+    "rightStick",
+    false,
+    "neutral",
+    "neutral"
+  );
+  const allConfigsCombined = [...leftStick, ...dpad, ...rightStick];
+  console.log(leftStick, dpad, rightStick);
+
+  return allConfigsCombined;
 };

@@ -149,11 +149,11 @@ export const steps = [
     options: [
       { value: "neutral", label: "Neutral - Legal at all tournaments" },
       {
-        value: "lastInput",
-        label: "Last Input - fastest, Legal at most tournaments",
+        value: "lastPressed",
+        label: "Last Pressed - fastest, Legal at most tournaments",
       },
-      { value: "absoluteLeft", label: "Always prefer left" },
-      { value: "absoluteRight", label: "Always prefer Right" },
+      { value: "preferLeft", label: "Always prefer Left" },
+      { value: "preferRight", label: "Always prefer Right" },
     ],
   },
   {
@@ -164,11 +164,11 @@ export const steps = [
     options: [
       { value: "neutral", label: "Neutral - Legal at all tournaments" },
       {
-        value: "lastInput",
-        label: "Last Input - fastest, Legal at most tournaments",
+        value: "lastPressed",
+        label: "Last Pressed - fastest, Legal at most tournaments",
       },
-      { value: "absoluteUp", label: "Always prefer Up" },
-      { value: "absoluteDown", label: "Always prefer Down" },
+      { value: "preferUp", label: "Always prefer Up" },
+      { value: "preferDown", label: "Always prefer Down" },
     ],
   },
 
