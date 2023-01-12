@@ -7,6 +7,7 @@ import {
 } from "./wizard-settings-manager.js";
 import { wizardToAdvanced } from "./wizard-to-advance.js";
 import { mappingsToBinary } from "./shared/hardware/web-to-hardware-config.js";
+import { keyEventCodeToC } from "./shared/constants/enums.js";
 const instructionsEl = document.getElementById("directions");
 const numberWrapperEl = document.getElementById("number-value-wrapper");
 const multiWrapperEl = document.getElementById("multi-value-wrapper");
@@ -50,7 +51,9 @@ const updateInstructions = () => {
 
 const updateKeyEl = (parentProp, prop) => {
   const keyEl = document.querySelector(`#${parentProp}-${prop}-value`);
-  keyEl.innerText = wizardSettings[parentProp][prop];
+  const keyCode = wizardSettings[parentProp][prop];
+  const humanReadableKey = keyEventCodeToC[keyCode];
+  keyEl.innerText = humanReadableKey ?? keyCode;
 };
 
 const updateAllKeyEls = () => {
@@ -178,7 +181,6 @@ const keyDownRouter = (event) => {
   }
   if (currentStep().stepType === "number") {
     numberInputKeyDownHandler(event);
-    return;
   } else if (currentStep().stepType === "multi") {
     multiValueKeyDownHandler(event);
   } else {
