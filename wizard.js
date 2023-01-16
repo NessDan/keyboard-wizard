@@ -8,6 +8,7 @@ import {
 import { wizardToAdvanced } from "./wizard-to-advance.js";
 import { mappingsToBinary } from "./shared/hardware/web-to-hardware-config.js";
 import { keyEventCodeToC } from "./shared/constants/enums.js";
+import { CardGroupComponent } from "./components/cardGroup.js";
 const instructionsEl = document.getElementById("directions");
 const numberWrapperEl = document.getElementById("number-value-wrapper");
 const multiWrapperEl = document.getElementById("multi-value-wrapper");
@@ -15,6 +16,24 @@ const numberInputEl = document.getElementById("number-value-input");
 const numberLabel = document.querySelector("#number-input-value");
 const inputEvent = new Event("input");
 const currentStep = () => steps[wizardStep];
+
+const renderInitialHTML = () => {
+  const renderOrder = ["leftStick", "buttons", "triggers", "system", "rightStick", "dpad", "misc", "socd"];
+
+  const groupHtml = renderOrder.reduce((acc, parentProp) => {
+    if (wizardSettings[parentProp] === undefined) {
+      console.error("Wizard settings is missing a parentProp", parentProp)
+      return acc;
+    }
+
+    return acc + CardGroupComponent({
+      parentProp,
+      childProps: wizardSettings[parentProp],
+    });
+  }, "");
+
+  document.getElementById("config-wrapper").innerHTML = groupHtml;
+};
 
 const whereIsKeyUsed = (keyboardKey) => {
   // Check if a key is already bound to a button
@@ -233,6 +252,7 @@ const startWizard = () => {
   });
 
   initWizardSettings();
+  renderInitialHTML();
   updateAllEls();
 };
 
