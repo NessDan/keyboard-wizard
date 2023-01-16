@@ -17,7 +17,7 @@ const numberLabel = document.querySelector("#number-input-value");
 const inputEvent = new Event("input");
 const currentStep = () => steps[wizardStep];
 
-const renderGroups = () => {
+const renderInitialHTML = () => {
   const renderOrder = ["leftStick", "buttons", "triggers", "system", "rightStick", "dpad", "misc", "socd"];
 
   const groupHtml = renderOrder.reduce((acc, parentProp) => {
@@ -136,7 +136,6 @@ const removeAllCardErrors = () => {
 const updateAllEls = () => {
   updateInstructions();
   showOrHideInstructionsWrapper();
-  renderGroups();
   updateAllKeyEls();
   updateActiveCard();
   removeAllCardErrors();
@@ -253,6 +252,7 @@ const startWizard = () => {
   });
 
   initWizardSettings();
+  renderInitialHTML();
   updateAllEls();
 };
 
