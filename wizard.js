@@ -9,6 +9,7 @@ import { wizardToAdvanced } from "./wizard-to-advance.js";
 import { mappingsToBinary } from "./shared/hardware/web-to-hardware-config.js";
 import { keyEventCodeToC } from "./shared/constants/enums.js";
 import { CardGroupComponent } from "./components/cardGroup.js";
+import { saveProfileToJSON } from "./shared/profiles/save.js";
 const instructionsEl = document.getElementById("directions");
 const numberWrapperEl = document.getElementById("number-value-wrapper");
 const multiWrapperEl = document.getElementById("multi-value-wrapper");
@@ -247,13 +248,21 @@ const eventListenerSetup = () => {
     eraseWizardSettingsLocalStorage();
     updateAllEls();
   });
+  document.querySelector("#save-for-advanced").addEventListener("click", () => {
+    const advancedVersion = wizardToAdvanced(wizardSettings);
+    const fullMappingStructure = [
+      { version: "1.0.0", configs: advancedVersion },
+    ];
+    saveProfileToJSON(fullMappingStructure);
+  });
   document
     .querySelector("#save-to-adapter-button")
     .addEventListener("click", () => {
       const advancedVersion = wizardToAdvanced(wizardSettings);
-      const binaryConfig = mappingsToBinary([
+      const fullMappingStructure = [
         { version: "1.0.0", configs: advancedVersion },
-      ]);
+      ];
+      const binaryConfig = mappingsToBinary(fullMappingStructure);
       console.log(binaryConfig);
     });
   numberInputEl.addEventListener("input", () => {
