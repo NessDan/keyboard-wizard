@@ -18,7 +18,14 @@ const inputEvent = new Event("input");
 const currentStep = () => steps[wizardStep];
 
 const renderGroups = () => {
-  let groupHtml = Object.keys(wizardSettings).reduce((acc, parentProp) => {
+  const renderOrder = ["leftStick", "buttons", "triggers", "system", "rightStick", "dpad", "misc", "socd"];
+
+  const groupHtml = renderOrder.reduce((acc, parentProp) => {
+    if (wizardSettings[parentProp] === undefined) {
+      console.error("Wizard settings is missing a parentProp", parentProp)
+      return acc;
+    }
+
     return acc + CardGroupComponent({
       parentProp,
       childProps: wizardSettings[parentProp],

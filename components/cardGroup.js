@@ -7,7 +7,7 @@ const cardGroupTitleLookup = {
   triggers: "Triggers",
   dpad: "D-Pad",
   system: "System",
-  misc: "Misc",
+  misc: "Misc.",
   socd: "SOCD",
 };
 
