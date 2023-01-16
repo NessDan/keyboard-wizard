@@ -18,18 +18,30 @@ const inputEvent = new Event("input");
 const currentStep = () => steps[wizardStep];
 
 const renderInitialHTML = () => {
-  const renderOrder = ["leftStick", "buttons", "triggers", "system", "rightStick", "dpad", "misc", "socd"];
+  const renderOrder = [
+    "leftStick",
+    "buttons",
+    "triggers",
+    "system",
+    "rightStick",
+    "dpad",
+    "misc",
+    "socd",
+  ];
 
   const groupHtml = renderOrder.reduce((acc, parentProp) => {
     if (wizardSettings[parentProp] === undefined) {
-      console.error("Wizard settings is missing a parentProp", parentProp)
+      console.error("Wizard settings is missing a parentProp", parentProp);
       return acc;
     }
 
-    return acc + CardGroupComponent({
-      parentProp,
-      childProps: wizardSettings[parentProp],
-    });
+    return (
+      acc +
+      CardGroupComponent({
+        parentProp,
+        childProps: wizardSettings[parentProp],
+      })
+    );
   }, "");
 
   document.getElementById("config-wrapper").innerHTML = groupHtml;
@@ -226,7 +238,7 @@ const cardClickHandler = (event) => {
 
 let wizardStep = 0;
 
-const startWizard = () => {
+const eventListenerSetup = () => {
   document.addEventListener("keydown", keyDownRouter);
   document.querySelectorAll(".card").forEach((cardEl) => {
     cardEl.addEventListener("click", cardClickHandler);
@@ -250,9 +262,13 @@ const startWizard = () => {
   document.querySelector("#number-value-save").addEventListener("click", () => {
     setValueToCurrentStep(numberInputEl.value);
   });
+};
 
+const startWizard = () => {
   initWizardSettings();
   renderInitialHTML();
+  eventListenerSetup();
+
   updateAllEls();
 };
 

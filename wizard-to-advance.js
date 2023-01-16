@@ -278,6 +278,120 @@ const directionsToAdvanced = (
 
   return configsCompleted;
 };
+const buttonsToAdvanced = (wizardSettings) => {
+  //   {
+  //     "keys": [
+  //       [
+  //           "KeyD"
+  //       ]
+  //   ],
+  //   "action": {
+  //       "type": "button",
+  //       "button": "A"
+  //   }
+  // }
+
+  return [
+    {
+      keys: [[wizardSettings.buttons.a]],
+      action: {
+        type: "button",
+        button: "A",
+      },
+    },
+    {
+      keys: [[wizardSettings.buttons.b]],
+      action: {
+        type: "button",
+        button: "B",
+      },
+    },
+    {
+      keys: [[wizardSettings.buttons.x]],
+      action: {
+        type: "button",
+        button: "X",
+      },
+    },
+    {
+      keys: [[wizardSettings.buttons.y]],
+      action: {
+        type: "button",
+        button: "Y",
+      },
+    },
+    {
+      keys: [[wizardSettings.triggers.l]],
+      action: {
+        type: "button",
+        button: "L",
+      },
+    },
+    {
+      keys: [[wizardSettings.triggers.r]],
+      action: {
+        type: "button",
+        button: "R",
+      },
+    },
+    {
+      keys: [[wizardSettings.triggers.zl]],
+      action: {
+        type: "button",
+        button: "ZL",
+      },
+    },
+    {
+      keys: [[wizardSettings.triggers.zr]],
+      action: {
+        type: "button",
+        button: "ZR",
+      },
+    },
+    {
+      keys: [[wizardSettings.system.start]],
+      action: {
+        type: "button",
+        button: "PLUS",
+      },
+    },
+    {
+      keys: [[wizardSettings.system.select]],
+      action: {
+        type: "button",
+        button: "MINUS",
+      },
+    },
+    {
+      keys: [[wizardSettings.system.home]],
+      action: {
+        type: "button",
+        button: "HOME",
+      },
+    },
+    {
+      keys: [[wizardSettings.system.capture]],
+      action: {
+        type: "button",
+        button: "CAPTURE",
+      },
+    },
+    {
+      keys: [[wizardSettings.misc.leftStickPress]],
+      action: {
+        type: "button",
+        button: "LCLICK",
+      },
+    },
+    {
+      keys: [[wizardSettings.misc.rightStickPress]],
+      action: {
+        type: "button",
+        button: "RCLICK",
+      },
+    },
+  ];
+};
 
 export const wizardToAdvanced = (wizardSettings) => {
   const leftStick = directionsToAdvanced(
@@ -301,8 +415,9 @@ export const wizardToAdvanced = (wizardSettings) => {
     "neutral",
     "neutral"
   );
-  const allConfigsCombined = [...leftStick, ...dpad, ...rightStick];
-  console.log(leftStick, dpad, rightStick);
+  const buttons = buttonsToAdvanced(wizardSettings);
+  const allConfigsCombined = [...buttons, ...leftStick, ...dpad, ...rightStick];
+  console.log(buttons, leftStick, dpad, rightStick);
 
   return allConfigsCombined;
 };
