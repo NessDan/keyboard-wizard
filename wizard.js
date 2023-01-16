@@ -8,6 +8,7 @@ import {
 import { wizardToAdvanced } from "./wizard-to-advance.js";
 import { mappingsToBinary } from "./shared/hardware/web-to-hardware-config.js";
 import { keyEventCodeToC } from "./shared/constants/enums.js";
+import { CardGroupComponent } from "./components/cardGroup.js";
 const instructionsEl = document.getElementById("directions");
 const numberWrapperEl = document.getElementById("number-value-wrapper");
 const multiWrapperEl = document.getElementById("multi-value-wrapper");
@@ -15,6 +16,17 @@ const numberInputEl = document.getElementById("number-value-input");
 const numberLabel = document.querySelector("#number-input-value");
 const inputEvent = new Event("input");
 const currentStep = () => steps[wizardStep];
+
+const renderGroups = () => {
+  let groupHtml = Object.keys(wizardSettings).reduce((acc, parentProp) => {
+    return acc + CardGroupComponent({
+      parentProp,
+      childProps: wizardSettings[parentProp],
+    });
+  }, "");
+
+  document.getElementById("config-wrapper").innerHTML = groupHtml;
+};
 
 const whereIsKeyUsed = (keyboardKey) => {
   // Check if a key is already bound to a button
@@ -117,6 +129,7 @@ const removeAllCardErrors = () => {
 const updateAllEls = () => {
   updateInstructions();
   showOrHideInstructionsWrapper();
+  renderGroups();
   updateAllKeyEls();
   updateActiveCard();
   removeAllCardErrors();
