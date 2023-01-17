@@ -10,6 +10,7 @@ import { mappingsToBinary } from "./shared/hardware/web-to-hardware-config.js";
 import { keyEventCodeToC } from "./shared/constants/enums.js";
 import { CardGroupComponent } from "./components/cardGroup.js";
 import { saveProfileToJSON } from "./shared/profiles/save.js";
+import { humanReadableEventKeyCode } from "./shared/constants/helpers.js";
 const instructionsEl = document.getElementById("directions");
 const numberWrapperEl = document.getElementById("number-value-wrapper");
 const multiWrapperEl = document.getElementById("multi-value-wrapper");
@@ -84,8 +85,8 @@ const updateInstructions = () => {
 const updateKeyEl = (parentProp, prop) => {
   const keyEl = document.querySelector(`#${parentProp}-${prop}-value`);
   const keyCode = wizardSettings[parentProp][prop];
-  const humanReadableKey = keyEventCodeToC[keyCode];
-  keyEl.innerText = humanReadableKey ?? keyCode;
+  const humanReadableKey = humanReadableEventKeyCode(keyCode);
+  keyEl.innerText = humanReadableKey;
 };
 
 const updateAllKeyEls = () => {
@@ -208,9 +209,9 @@ const keyDownRouter = (event) => {
   event.preventDefault();
 
   // last step should be success message
-  if (wizardStep === steps.length - 1) {
-    return;
-  }
+  if (wizardStep === steps.length - 1) return;
+  if (!event.code) return; // Sometimes function keys return null event codes
+
   if (currentStep().stepType === "number") {
     numberInputKeyDownHandler(event);
   } else if (currentStep().stepType === "multi") {
