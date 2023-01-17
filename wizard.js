@@ -245,27 +245,25 @@ const eventListenerSetup = () => {
   document.querySelectorAll(".card").forEach((cardEl) => {
     cardEl.addEventListener("click", cardClickHandler);
   });
-  document.querySelector("#reset-button").addEventListener("click", () => {
+  document.querySelector("#delete-config").addEventListener("click", () => {
     eraseWizardSettingsLocalStorage();
     updateAllEls();
   });
-  document.querySelector("#save-for-advanced").addEventListener("click", () => {
+  document.querySelector("#save-to-file").addEventListener("click", () => {
     const advancedVersion = wizardToAdvanced(wizardSettings);
     const fullMappingStructure = [
       { version: "1.0.0", configs: advancedVersion },
     ];
     saveProfileToJSON(fullMappingStructure);
   });
-  document
-    .querySelector("#save-to-adapter-button")
-    .addEventListener("click", () => {
-      const advancedVersion = wizardToAdvanced(wizardSettings);
-      const fullMappingStructure = [
-        { version: "1.0.0", configs: advancedVersion },
-      ];
-      const binaryConfig = mappingsToBinary(fullMappingStructure);
-      console.log(binaryConfig);
-    });
+  document.querySelector("#deploy-config").addEventListener("click", () => {
+    const advancedVersion = wizardToAdvanced(wizardSettings);
+    const fullMappingStructure = [
+      { version: "1.0.0", configs: advancedVersion },
+    ];
+    const binaryConfig = mappingsToBinary(fullMappingStructure);
+    console.log(binaryConfig);
+  });
   numberInputEl.addEventListener("input", () => {
     numberLabel.innerText = numberInputEl.value;
   });

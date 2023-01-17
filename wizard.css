@@ -60,6 +60,19 @@
   justify-content: space-evenly;
 }
 
+#profile-options {
+  position: sticky;
+  bottom: 0px;
+  display: inline-flex;
+  flex-direction: row-reverse;
+  background-color: white;
+  float: right;
+}
+
+#profile-options > * {
+  margin: 8px;
+}
+
 .error {
   animation: fade 0.8s ease-in-out;
 }
