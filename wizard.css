@@ -8,7 +8,7 @@
   margin: 0.5rem;
   text-align: center;
   min-height: 7.2rem;
-  font-size: 1.2rem;
+  font-size: 1rem;
   width: 7rem;
   cursor: pointer;
 }
@@ -37,7 +37,7 @@
   border: 3px solid gray;
   overflow-wrap: anywhere;
   font-family: monospace;
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 .card-holder {
@@ -58,6 +58,11 @@
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
+}
+
+/* Because SOCD has longer words, it'll have smaller font size. */
+#socd-group .value {
+  font-size: 0.9rem;
 }
 
 #profile-options {

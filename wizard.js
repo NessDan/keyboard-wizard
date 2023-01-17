@@ -7,10 +7,9 @@ import {
 } from "./wizard-settings-manager.js";
 import { wizardToAdvanced } from "./wizard-to-advance.js";
 import { mappingsToBinary } from "./shared/hardware/web-to-hardware-config.js";
-import { keyEventCodeToC } from "./shared/constants/enums.js";
 import { CardGroupComponent } from "./components/cardGroup.js";
 import { saveProfileToJSON } from "./shared/profiles/save.js";
-import { humanReadableEventKeyCode } from "./shared/constants/helpers.js";
+import { getUserFriendlyText } from "./shared/constants/helpers.js";
 const instructionsEl = document.getElementById("directions");
 const numberWrapperEl = document.getElementById("number-value-wrapper");
 const multiWrapperEl = document.getElementById("multi-value-wrapper");
@@ -85,7 +84,7 @@ const updateInstructions = () => {
 const updateKeyEl = (parentProp, prop) => {
   const keyEl = document.querySelector(`#${parentProp}-${prop}-value`);
   const keyCode = wizardSettings[parentProp][prop];
-  const humanReadableKey = humanReadableEventKeyCode(keyCode);
+  const humanReadableKey = getUserFriendlyText(keyCode);
   keyEl.innerText = humanReadableKey;
 };
 
