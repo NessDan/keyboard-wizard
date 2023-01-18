@@ -60,12 +60,12 @@ export const steps = [
     propertyToModify: "zr",
   },
   {
-    keyToSet: "Start/+ Button",
+    keyToSet: "Start/Plus Button",
     parentProp: "system",
     propertyToModify: "start",
   },
   {
-    keyToSet: "Select/- Button",
+    keyToSet: "Select/Minus Button",
     parentProp: "system",
     propertyToModify: "select",
   },
