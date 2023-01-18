@@ -45,7 +45,9 @@ const renderInitialHTML = () => {
     );
   }, "");
 
-  document.getElementById("config-wrapper").innerHTML = groupHtml;
+  document
+    .getElementById("config-wrapper")
+    .insertAdjacentHTML("afterbegin", groupHtml);
 };
 
 const whereIsKeyUsed = (keyboardKey) => {
@@ -76,8 +78,14 @@ const updateInstructions = () => {
     instructionsEl.innerText = currentStep().message;
   } else if (currentStep().keyToSet) {
     instructionsEl.innerText = `Press key for: ${currentStep().keyToSet}`;
-  } else if (currentStep().valueToSet) {
-    instructionsEl.innerText = `Set value for: ${currentStep().valueToSet}`;
+  } else if (currentStep().stepType === "multi") {
+    instructionsEl.innerHTML = `<b>Press 1-4</b> to set: ${
+      currentStep().valueToSet
+    }`;
+  } else if (currentStep().stepType === "number") {
+    instructionsEl.innerHTML = `<b>Use Arrow Keys</b> to set: ${
+      currentStep().valueToSet
+    }`;
   }
 };
 
