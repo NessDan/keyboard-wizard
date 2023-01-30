@@ -154,12 +154,37 @@ const removeAllCardErrors = () => {
   });
 };
 
+const toggleSaveButtons = () => {
+  // Loop through all the wizard settings and check if any are unset
+  // If any are unset then disable the save button
+  const saveButtonEls = [
+    document.getElementById("deploy-config"),
+    document.getElementById("save-to-file"),
+  ];
+  const isUnset = Object.keys(wizardSettings).some((parentProp) => {
+    return Object.keys(wizardSettings[parentProp]).some((prop) => {
+      return wizardSettings[parentProp][prop] === "";
+    });
+  });
+
+  if (isUnset) {
+    saveButtonEls.forEach((saveButtonEl) => {
+      saveButtonEl.disabled = true;
+    });
+  } else {
+    saveButtonEls.forEach((saveButtonEl) => {
+      saveButtonEl.disabled = false;
+    });
+  }
+};
+
 const updateAllEls = () => {
   updateInstructions();
   showOrHideInstructionsWrapper();
   updateAllKeyEls();
   updateActiveCard();
   removeAllCardErrors();
+  toggleSaveButtons();
 };
 
 const setValueToCurrentStep = (value) => {
