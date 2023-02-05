@@ -111,10 +111,16 @@ const updateActiveCard = () => {
     `#${parentProp}-${prop}-card`
   );
   const prevActiveCardEl = document.querySelector(".card.active");
-  prevActiveCardEl?.classList?.remove("active");
-  prevActiveCardEl?.ariaPressed ?? "false";
-  nextActiveCardEl?.classList?.add("active");
-  nextActiveCardEl?.ariaPressed ?? "true";
+
+  if (prevActiveCardEl) {
+    prevActiveCardEl.classList.remove("active");
+    prevActiveCardEl.ariaPressed = "false";
+  }
+
+  if (nextActiveCardEl) {
+    nextActiveCardEl.classList.add("active");
+    nextActiveCardEl.ariaPressed = "true";
+  }
 };
 
 const convertMultiOptionsHtml = () => {
