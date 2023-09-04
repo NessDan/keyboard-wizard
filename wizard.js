@@ -50,29 +50,6 @@ const renderInitialHTML = () => {
     .insertAdjacentHTML("afterbegin", groupHtml);
 };
 
-const whereIsKeyUsed = (keyboardKey) => {
-  // Check if a key is already bound to a button
-  let findParentProp, findProp;
-
-  let keyUsed = Object.keys(wizardSettings).some((parentProp) => {
-    return Object.keys(wizardSettings[parentProp]).some((prop) => {
-      if (
-        parentProp === currentStep().parentProp &&
-        prop === currentStep().propertyToModify
-      ) {
-        // Checking if the key being checked is currently being set if true skip
-        return false;
-      }
-      if (wizardSettings[parentProp][prop] === keyboardKey) {
-        findParentProp = parentProp;
-        findProp = prop;
-        return true;
-      }
-    });
-  });
-  return [keyUsed, findParentProp, findProp];
-};
-
 const updateInstructions = () => {
   if (currentStep().stepType === "message") {
     instructionsEl.innerText = currentStep().message;
@@ -160,6 +137,60 @@ const removeAllCardErrors = () => {
   });
 };
 
+const updateCardErrors = () => {
+  removeAllCardErrors();
+
+  const duplicates = [];
+
+  // Loop through all values in wizardSettings and find all the duplicates
+  Object.keys(wizardSettings).forEach((parentProp) => {
+    // Skip SOCD
+    if (parentProp === "socd") {
+      return false;
+    }
+
+    Object.keys(wizardSettings[parentProp]).forEach((prop) => {
+      const keyboardKey = wizardSettings[parentProp][prop];
+      if (keyboardKey !== "") {
+        const duplicate = Object.keys(wizardSettings).some(
+          (otherParentProp) => {
+            // Skip SOCD
+            if (otherParentProp === "socd") {
+              return false;
+            }
+
+            return Object.keys(wizardSettings[otherParentProp]).some(
+              (otherProp) => {
+                if (otherParentProp === parentProp && otherProp === prop) {
+                  return false;
+                }
+
+                return (
+                  wizardSettings[otherParentProp][otherProp] === keyboardKey
+                );
+              }
+            );
+          }
+        );
+        if (duplicate && !duplicates.includes(keyboardKey)) {
+          duplicates.push(keyboardKey);
+        }
+      }
+    });
+  });
+
+  // Loop over duplicates array and call addErrorToCard
+  duplicates.forEach((duplicate) => {
+    Object.keys(wizardSettings).forEach((parentProp) => {
+      Object.keys(wizardSettings[parentProp]).forEach((prop) => {
+        if (wizardSettings[parentProp][prop] === duplicate) {
+          addErrorToCard(parentProp, prop);
+        }
+      });
+    });
+  });
+};
+
 const toggleSaveButtons = () => {
   // Loop through all the wizard settings and check if any are unset
   // If any are unset then disable the save button
@@ -167,19 +198,24 @@ const toggleSaveButtons = () => {
     document.getElementById("deploy-config"),
     document.getElementById("save-to-file"),
   ];
+
   const isUnset = Object.keys(wizardSettings).some((parentProp) => {
     return Object.keys(wizardSettings[parentProp]).some((prop) => {
       return wizardSettings[parentProp][prop] === "";
     });
   });
 
-  if (isUnset) {
+  const hasErrors = document.querySelectorAll(".card.error").length > 0;
+
+  const canSave = !isUnset && !hasErrors;
+
+  if (canSave) {
     saveButtonEls.forEach((saveButtonEl) => {
-      saveButtonEl.disabled = true;
+      saveButtonEl.disabled = false;
     });
   } else {
     saveButtonEls.forEach((saveButtonEl) => {
-      saveButtonEl.disabled = false;
+      saveButtonEl.disabled = true;
     });
   }
 };
@@ -189,7 +225,7 @@ const updateAllEls = () => {
   showOrHideInstructionsWrapper();
   updateAllKeyEls();
   updateActiveCard();
-  removeAllCardErrors();
+  updateCardErrors();
   toggleSaveButtons();
 };
 
@@ -232,15 +268,18 @@ const numberInputKeyDownHandler = (event) => {
   }
 };
 
-const keyboardKeyDownHandler = (event) => {
-  const [keyUsed, duplicateParentProp, duplicateProp] = whereIsKeyUsed(
-    event.code
-  );
-  if (keyUsed) {
-    addErrorToCard(duplicateParentProp, duplicateProp);
-    return;
-  }
+const keyboardKeyUpHandler = (event) => {
   setValueToCurrentStep(event.code);
+};
+
+const keyUpRouter = (event) => {
+  event.preventDefault();
+
+  // last step should be success message
+  if (wizardStep === steps.length - 1) return;
+  if (!event.code) return; // Sometimes function keys return null event codes
+
+  keyboardKeyUpHandler(event);
 };
 
 const keyDownRouter = (event) => {
@@ -254,8 +293,6 @@ const keyDownRouter = (event) => {
     numberInputKeyDownHandler(event);
   } else if (currentStep().stepType === "multi") {
     multiValueKeyDownHandler(event);
-  } else {
-    keyboardKeyDownHandler(event);
   }
 };
 
@@ -279,6 +316,7 @@ const cardClickHandler = (event) => {
 let wizardStep = 0;
 
 const eventListenerSetup = () => {
+  document.addEventListener("keyup", keyUpRouter);
   document.addEventListener("keydown", keyDownRouter);
   document.querySelectorAll(".card").forEach((cardEl) => {
     cardEl.addEventListener("click", cardClickHandler);
