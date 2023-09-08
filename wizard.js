@@ -238,6 +238,10 @@ const setValueToCurrentStep = (value) => {
   saveWizardSettingsLocalStorage();
 };
 
+const keyboardKeyDownHandler = (event) => {
+  setValueToCurrentStep(event.code);
+};
+
 const multiValueKeyDownHandler = (event) => {
   // Grabs the last character of number codes 'Digit1' -> 1 Or 'Numpad1' -> 1
   // Then checks if the number is a valid option in our multiselect array
@@ -268,20 +272,6 @@ const numberInputKeyDownHandler = (event) => {
   }
 };
 
-const keyboardKeyUpHandler = (event) => {
-  setValueToCurrentStep(event.code);
-};
-
-const keyUpRouter = (event) => {
-  event.preventDefault();
-
-  // last step should be success message
-  if (wizardStep === steps.length - 1) return;
-  if (!event.code) return; // Sometimes function keys return null event codes
-
-  keyboardKeyUpHandler(event);
-};
-
 const keyDownRouter = (event) => {
   event.preventDefault();
 
@@ -293,6 +283,8 @@ const keyDownRouter = (event) => {
     numberInputKeyDownHandler(event);
   } else if (currentStep().stepType === "multi") {
     multiValueKeyDownHandler(event);
+  } else {
+    keyboardKeyDownHandler(event);
   }
 };
 
@@ -316,7 +308,6 @@ const cardClickHandler = (event) => {
 let wizardStep = 0;
 
 const eventListenerSetup = () => {
-  document.addEventListener("keyup", keyUpRouter);
   document.addEventListener("keydown", keyDownRouter);
   document.querySelectorAll(".card").forEach((cardEl) => {
     cardEl.addEventListener("click", cardClickHandler);
