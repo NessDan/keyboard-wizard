@@ -40,6 +40,8 @@ const directionsToAdvanced = (
     Neutral: 8,
   };
 
+  const defaultMovementBehavior = wizardSettings.misc.movement;
+
   const everyCombination = (keys) => {
     const combinations = [];
     for (let i = 0; i < keys.length; i++) {
@@ -168,7 +170,8 @@ const directionsToAdvanced = (
     return upDown;
   };
 
-  const isWalking = (keys) => {
+  // Whether the movement modifier key (hold to walk / run) is being held
+  const isMoveModKeyHeld = (keys) => {
     if (!supportWalk) return false;
     if (keys.includes(wizardSettings.misc.walk)) {
       return true;
@@ -215,12 +218,12 @@ const directionsToAdvanced = (
         action: actionObject,
       };
 
-      const walking = isWalking(combination);
+      const moveModKeyHeld = isMoveModKeyHeld(combination);
       let upDown = "";
       let leftRight = "";
 
       // If a user just presses walk alone, we can ignore it.
-      if (combination.length === 1 && walking) {
+      if (combination.length === 1 && moveModKeyHeld) {
         return;
       }
 
@@ -262,9 +265,17 @@ const directionsToAdvanced = (
         } else {
           actionConfig.action.angle = directionToAngle[direction];
 
-          actionConfig.action.stickDistance = walking
-            ? wizardSettings.misc.walkSpeed
-            : 100;
+          // Every combination of hold to run / walk, and whether
+          // the key to hold is being held.
+          if (defaultMovementBehavior == "run" && moveModKeyHeld) {
+            actionConfig.action.stickDistance = wizardSettings.misc.walkSpeed;
+          } else if (defaultMovementBehavior == "run" && !moveModKeyHeld) {
+            actionConfig.action.stickDistance = 100;
+          } else if (defaultMovementBehavior == "walk" && moveModKeyHeld) {
+            actionConfig.action.stickDistance = 100;
+          } else if (defaultMovementBehavior == "walk" && !moveModKeyHeld) {
+            actionConfig.action.stickDistance = wizardSettings.misc.walkSpeed;
+          }
         }
       }
 

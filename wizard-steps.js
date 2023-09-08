@@ -131,7 +131,17 @@ export const steps = [
     propertyToModify: "rightStickPress",
   },
   {
-    keyToSet: "Walk",
+    valueToSet: "Run or Walk",
+    parentProp: "misc",
+    propertyToModify: "movement",
+    stepType: "multi",
+    options: [
+      { value: "run", label: "Run by default, hold to walk (Recommended)" },
+      { value: "walk", label: "Walk by default, hold to run" },
+    ],
+  },
+  {
+    keyToSet: "Walk (or Run)",
     parentProp: "misc",
     propertyToModify: "walk",
   },

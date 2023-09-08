@@ -1,5 +1,5 @@
 // THIS NEEDS TO BE INCREMENTED IF wizardSettings STRUCTURE IS CHANGED AT ALL
-const currentWizardVersion = "1";
+const currentWizardVersion = "2";
 
 export let wizardSettings;
 
@@ -74,6 +74,7 @@ export const resetWizardSettings = () => {
     misc: {
       leftStickPress: "",
       rightStickPress: "",
+      movement: "",
       walk: "",
       walkSpeed: "",
     },
