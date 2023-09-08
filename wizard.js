@@ -56,7 +56,8 @@ const updateInstructions = () => {
   } else if (currentStep().keyToSet) {
     instructionsEl.innerText = `Press key for: ${currentStep().keyToSet}`;
   } else if (currentStep().stepType === "multi") {
-    instructionsEl.innerHTML = `<b>Press 1-4</b> to set: ${
+    const totalSteps = currentStep().options.length;
+    instructionsEl.innerHTML = `<b>Press 1-${totalSteps}</b> to set: ${
       currentStep().valueToSet
     }`;
   } else if (currentStep().stepType === "number") {
