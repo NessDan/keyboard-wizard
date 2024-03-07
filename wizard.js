@@ -240,6 +240,7 @@ const setValueToCurrentStep = (value) => {
 };
 
 const keyboardKeyDownHandler = (event) => {
+  if (event.repeat) return;
   setValueToCurrentStep(event.code);
 };
 
