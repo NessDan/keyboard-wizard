@@ -326,11 +326,13 @@ const eventListenerSetup = () => {
     saveProfileToJSON(fullMappingStructure);
   });
   document.querySelector("#deploy-config").addEventListener("click", () => {
+    const profileNumber =
+      Number(document.querySelector("#profile-number")?.value) || 1;
     const advancedVersion = wizardToAdvanced(wizardSettings);
     const fullMappingStructure = [
       { version: "1.0.0", configs: advancedVersion },
     ];
-    const binaryConfig = mappingsToBinary(fullMappingStructure);
+    const binaryConfig = mappingsToBinary(fullMappingStructure, profileNumber);
     console.log(binaryConfig);
   });
   numberInputEl.addEventListener("input", () => {

@@ -82,6 +82,7 @@
   flex-direction: row-reverse;
   background-color: white;
   float: right;
+  align-items: center;
 }
 
 #profile-options > * {
