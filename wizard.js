@@ -236,7 +236,6 @@ const setValueToCurrentStep = (value) => {
   wizardSettings[parentProp][prop] = value;
   wizardStep += 1;
   updateAllEls();
-  saveWizardSettingsLocalStorage();
 };
 
 const keyboardKeyDownHandler = (event) => {
@@ -326,6 +325,7 @@ const eventListenerSetup = () => {
     saveProfileToJSON(fullMappingStructure);
   });
   document.querySelector("#deploy-config").addEventListener("click", () => {
+    saveWizardSettingsLocalStorage(); // Save to local storage once "Save to Edgeguard" is clicked
     const profileNumber =
       Number(document.querySelector("#profile-number")?.value) || 1;
     const advancedVersion = wizardToAdvanced(wizardSettings);
