@@ -375,10 +375,12 @@ const eventListenerSetup = () => {
     saveProfileToJSON(fullMappingStructure);
   });
   connectAdapterButtonEl.addEventListener("click", async () => {
-    await connectToAdapter();
-  });
-  navigator.usb.addEventListener("connect", (event) => {
-    const device = event.device;
+    const device = await connectToAdapter();
+
+    if (!device) {
+      return;
+    }
+
     onDeviceConnect(device);
   });
   navigator.usb.addEventListener("disconnect", (event) => {
@@ -403,12 +405,14 @@ const eventListenerSetup = () => {
   });
 };
 
-const startWizard = () => {
-  initWizardSettings();
-  renderInitialHTML();
-  eventListenerSetup();
+document.addEventListener("DOMContentLoaded", (event) => {
+  const startWizard = () => {
+    initWizardSettings();
+    renderInitialHTML();
+    eventListenerSetup();
 
-  updateAllEls();
-};
+    updateAllEls();
+  };
 
-startWizard();
+  startWizard();
+});
