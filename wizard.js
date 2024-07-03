@@ -10,11 +10,17 @@ import { mappingsToBinary } from "./shared/hardware/web-to-hardware-config.js";
 import { CardGroupComponent } from "./components/cardGroup.js";
 import { saveProfileToJSON } from "./shared/profiles/save.js";
 import { getUserFriendlyText } from "./shared/constants/helpers.js";
+import {
+  connectToAdapter,
+  getMaxProfileCount,
+} from "./shared/hardware/device.js";
 const instructionsEl = document.getElementById("directions");
 const numberWrapperEl = document.getElementById("number-value-wrapper");
 const multiWrapperEl = document.getElementById("multi-value-wrapper");
 const numberInputEl = document.getElementById("number-value-input");
 const numberLabel = document.querySelector("#number-input-value");
+const deployProfileButtonEl = document.getElementById("deploy-config");
+const connectAdapterButtonEl = document.getElementById("connect-adapter");
 const inputEvent = new Event("input");
 const currentStep = () => steps[wizardStep];
 
@@ -99,6 +105,30 @@ const updateActiveCard = () => {
     nextActiveCardEl.classList.add("active");
     nextActiveCardEl.ariaPressed = "true";
   }
+};
+
+const updateProfileSelect = async (device) => {
+  const profileSelectEl = document.getElementById("profile-number");
+
+  if (!device) {
+    profileSelectEl.disabled = true;
+    profileSelectEl.title = "Please connect device to select profile";
+    profileSelectEl.innerHTML = `<option value="1">1</option>`;
+    return;
+  }
+
+  const maxProfiles = await getMaxProfileCount(device);
+
+  console.log("Max profile count", maxProfiles);
+
+  profileSelectEl.disabled = false;
+  let optionMarkup = "";
+
+  for (let i = 1; i <= maxProfiles; i++) {
+    optionMarkup += `<option value="${i}">${i}</option>`;
+  }
+
+  profileSelectEl.innerHTML = optionMarkup;
 };
 
 const convertMultiOptionsHtml = () => {
@@ -306,6 +336,26 @@ const cardClickHandler = (event) => {
   updateAllEls();
 };
 
+const showSaveHideConnect = () => {
+  deployProfileButtonEl.classList.remove("hidden");
+  connectAdapterButtonEl.classList.add("hidden");
+};
+
+const showConnectHideSave = () => {
+  deployProfileButtonEl.classList.add("hidden");
+  connectAdapterButtonEl.classList.remove("hidden");
+};
+
+const onDeviceConnect = async (device) => {
+  showSaveHideConnect();
+  await updateProfileSelect(device);
+};
+
+const onDeviceDisconnect = async () => {
+  showConnectHideSave();
+  await updateProfileSelect();
+};
+
 let wizardStep = 0;
 
 const eventListenerSetup = () => {
@@ -323,6 +373,16 @@ const eventListenerSetup = () => {
       { version: "1.0.0", configs: advancedVersion },
     ];
     saveProfileToJSON(fullMappingStructure);
+  });
+  connectAdapterButtonEl.addEventListener("click", async () => {
+    await connectToAdapter();
+  });
+  navigator.usb.addEventListener("connect", (event) => {
+    const device = event.device;
+    onDeviceConnect(device);
+  });
+  navigator.usb.addEventListener("disconnect", (event) => {
+    onDeviceDisconnect();
   });
   document.querySelector("#deploy-config").addEventListener("click", () => {
     saveWizardSettingsLocalStorage(); // Save to local storage once "Save to Edgeguard" is clicked

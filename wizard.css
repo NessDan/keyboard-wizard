@@ -89,6 +89,10 @@
   margin: 8px;
 }
 
+#profile-number:disabled {
+  cursor: not-allowed;
+}
+
 .error {
   transition: box-shadow 0.3s ease-in-out;
   box-shadow: 0px 0px 8px 3px red;
