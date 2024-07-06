@@ -122,6 +122,7 @@ const updateProfileSelect = async (device) => {
   console.log("Max profile count", maxProfiles);
 
   profileSelectEl.disabled = false;
+  profileSelectEl.title = "";
   let optionMarkup = "";
 
   for (let i = 1; i <= maxProfiles; i++) {
