@@ -113,7 +113,7 @@ const updateProfileSelect = async (device) => {
   if (!device) {
     profileSelectEl.disabled = true;
     profileSelectEl.title = "Please connect device to select profile";
-    profileSelectEl.innerHTML = `<option value="1">1</option>`;
+    profileSelectEl.innerHTML = `<option value="0">1</option>`;
     return;
   }
 
@@ -125,7 +125,7 @@ const updateProfileSelect = async (device) => {
   let optionMarkup = "";
 
   for (let i = 1; i <= maxProfiles; i++) {
-    optionMarkup += `<option value="${i}">${i}</option>`;
+    optionMarkup += `<option value="${i - 1}">${i}</option>`;
   }
 
   profileSelectEl.innerHTML = optionMarkup;
@@ -388,13 +388,12 @@ const eventListenerSetup = () => {
   });
   document.querySelector("#deploy-config").addEventListener("click", () => {
     saveWizardSettingsLocalStorage(); // Save to local storage once "Save to Edgeguard" is clicked
-    const profileNumber =
-      Number(document.querySelector("#profile-number")?.value) || 1;
+    const profileIdx = Number(document.querySelector("#profile-number")?.value);
     const advancedVersion = wizardToAdvanced(wizardSettings);
     const fullMappingStructure = [
       { version: "1.0.0", configs: advancedVersion },
     ];
-    const binaryConfig = mappingsToBinary(fullMappingStructure, profileNumber);
+    const binaryConfig = mappingsToBinary(fullMappingStructure, profileIdx);
     console.log(binaryConfig);
   });
   numberInputEl.addEventListener("input", () => {
